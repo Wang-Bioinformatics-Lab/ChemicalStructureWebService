@@ -1,3 +1,7 @@
+from flask import abort, jsonify, render_template, request, redirect, url_for
+
+from app import app
+
 from indigo import *
 from indigo_renderer import *
 from indigo_inchi import *
@@ -5,10 +9,29 @@ import random
 import string
 import json
 
+
 from flask import Flask
 from flask import request
 from flask import send_file
-app = Flask(__name__)
+
+@app.route("/debug")
+def debug():
+    indigo = Indigo()
+    indigo_inchi = IndigoInchi(indigo)
+    m = indigo_inchi.loadMolecule("InChI=1S/C27H42O4/c1-15-7-10-27(30-14-15)16(2)24-22(31-27)12-21-19-6-5-17-11-18(28)8-9-25(17,3)20(19)13-23(29)26(21,24)4/h15-22,24,28H,5-14H2,1-4H3/t15-,16 ,17 ,18 ,19-,20 ,21 ,22 ,24 ,25 ,26-,27-/m1/s1")
+    m.aromatize()
+
+    fp = m.fingerprint("sim");
+
+    similarity_tanimoto = indigo.similarity(fp, fp, "tanimoto")
+
+    return str(similarity_tanimoto)
+
+
+
+@app.route("/heartbeat")
+def heartbeat():
+    return "{}"
 
 @app.route("/structuremass")
 def getstructuremass():
@@ -51,7 +74,6 @@ def generatesmilespng():
     indigo = Indigo()
     renderer = IndigoRenderer(indigo)
 
-
     caption = request.args.get('caption')
     if caption == None:
         caption = ""
@@ -63,7 +85,7 @@ def generatesmilespng():
     width = 350
     height = 250
 
-    print request.args
+    print(request.args)
 
     try:
         if width_string != None and height_string != None:
@@ -74,7 +96,7 @@ def generatesmilespng():
             if height < 0:
                 height = 250
     except ValueError:
-        print "oops"
+        print("Error")
 
 
     #Determining whether input is smiles or inchi
@@ -121,6 +143,33 @@ def smilessimilarity():
 
     #m1 = indigo.loadMolecule("CC(C)C=CCCCCC(=O)NCc1ccc(c(c1)OC)O")
     #m2 = indigo.loadMolecule("COC1=C(C=CC(=C1)C=O)O")
+    # Aromatize molecules because second molecule is not in aromatic form
+    m1.aromatize()
+    m2.aromatize()
+
+    fp1 = m1.fingerprint("sim");
+    fp2 = m2.fingerprint("sim");
+
+    similarity_tanimoto = indigo.similarity(fp1, fp2, "tanimoto")
+
+    return_dict = {}
+    return_dict["similarity"] = similarity_tanimoto
+
+    return json.dumps(return_dict)
+
+@app.route("/structure_similarity/inchi")
+def inchisimilarity():
+    indigo = Indigo()
+    indigo_inchi = IndigoInchi(indigo);
+
+    structure_1 = request.args.get('structure1')
+    structure_2 = request.args.get('structure2')
+
+    print(structure_1, structure_2)
+
+    m1 = indigo_inchi.loadMolecule(structure_1)
+    m2 = indigo_inchi.loadMolecule(structure_2)
+
     # Aromatize molecules because second molecule is not in aromatic form
     m1.aromatize()
     m2.aromatize()
