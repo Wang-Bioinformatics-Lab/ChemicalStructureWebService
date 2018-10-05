@@ -184,6 +184,14 @@ def inchisimilarity():
 
     return json.dumps(return_dict)
 
+@app.route("/inchi/inchikey")
+def inchikeyinchi():
+    indigo = Indigo()
+    indigo_inchi = IndigoInchi(indigo);
+
+    return indigo_inchi.getInchiKey(request.args.get('inchi'))
+
+
 @app.route("/structure_similarity/smiles.jsonp")
 def smilessimilarity_jsonp():
     indigo = Indigo()
