@@ -6,9 +6,11 @@ from indigo import *
 from indigo_renderer import *
 from indigo_inchi import *
 import random
+import uuid
 import string
 import json
 
+from rdkit import Chem
 
 from flask import Flask
 from flask import request
@@ -21,7 +23,7 @@ def debug():
     m = indigo_inchi.loadMolecule("InChI=1S/C27H42O4/c1-15-7-10-27(30-14-15)16(2)24-22(31-27)12-21-19-6-5-17-11-18(28)8-9-25(17,3)20(19)13-23(29)26(21,24)4/h15-22,24,28H,5-14H2,1-4H3/t15-,16 ,17 ,18 ,19-,20 ,21 ,22 ,24 ,25 ,26-,27-/m1/s1")
     m.aromatize()
 
-    fp = m.fingerprint("sim");
+    fp = m.fingerprint("sim")
 
     similarity_tanimoto = indigo.similarity(fp, fp, "tanimoto")
 
@@ -123,7 +125,7 @@ def generatesmilespng():
     indigo.setOption('render-coloring', True)
 
     output_folder = "structure_images/"
-    output_filename = randomword(10) + ".png"
+    output_filename = str(uuid.uuid4) + ".png"
 
     output_path = output_folder + output_filename
 
@@ -221,8 +223,14 @@ def smilessimilarity_jsonp():
     return_string = functionname + "(" + str(json.dumps(return_dict)) + ");"
     return return_string
 
-def randomword(length):
-   return ''.join(random.choice(string.lowercase) for i in range(length))
+
+
+@app.route("/conversion/mol")
+def convert_to_mol():
+    smiles_string = request.args.get("smiles")
+    m = Chem.MolFromSmiles(smiles_string)
+
+    return Chem.MolToMolBlock(m)
 
 if __name__ == "__main__":
     app.debug = False

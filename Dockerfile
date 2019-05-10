@@ -1,12 +1,13 @@
-FROM ubuntu:latest
+FROM mcs07/rdkit:latest
+
 MAINTAINER Mingxun Wang "mwang87@gmail.com"
 
 RUN apt-get update -y
-RUN apt-get install -y python-pip python-dev build-essential
+RUN apt-get install -y python3-pip python3-dev build-essential
 RUN apt-get install -y default-jre
-RUN pip install flask
-RUN pip install gunicorn
 
+RUN pip3 install flask
+RUN pip3 install gunicorn
 
 COPY . /app
 WORKDIR /app
