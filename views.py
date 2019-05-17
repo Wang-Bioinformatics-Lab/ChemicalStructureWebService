@@ -38,24 +38,25 @@ def heartbeat():
 @app.route("/structuremass")
 def getstructuremass():
     indigo = Indigo()
-    renderer = IndigoRenderer(indigo)
 
-    smiles = request.args.get('smiles')
-    inchi = request.args.get('inchi')
-    if (smiles == None and inchi != None):
+    if "inchi" in request.args:
+        inchi = request.args.get('inchi')
+        print("INCHI", inchi)
         inchi = inchi.lstrip()
+
+
         indigo_inchi = IndigoInchi(indigo)
         mol = indigo_inchi.loadMolecule(inchi)
-    else:
-        filter_salts = request.args.get("filtersalts")
-        if filter_salts != None:
+    elif "smiles" in request.args:
+        smiles = request.args.get('smiles')
+        if "filtersalts" in request.args:
             if len(smiles.split(".")) > 1:
                 if len(smiles.split(".")[0]) > smiles.split(".")[1]:
                     smiles = smiles.split(".")[0]
                 else:
                     smiles = smiles.split(".")[1]
 
-        smiles = smiles.lstrip();
+        smiles = smiles.lstrip()
         mol = indigo.loadMolecule(smiles)
 
     mol.dearomatize()
