@@ -193,6 +193,16 @@ def inchikeyinchi():
 
     return indigo_inchi.getInchiKey(request.args.get('inchi'))
 
+@app.route("/smiles/inchikey")
+def inchikeysmiles():
+    indigo = Indigo()
+    indigo_inchi = IndigoInchi(indigo)
+
+    smiles = request.args.get('smiles')
+    m = indigo.loadMolecule(smiles)
+
+    return indigo_inchi.getInchiKey(indigo_inchi.getInchi(m))
+
 
 @app.route("/structure_similarity/smiles.jsonp")
 def smilessimilarity_jsonp():
