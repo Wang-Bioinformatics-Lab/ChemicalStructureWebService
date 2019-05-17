@@ -204,6 +204,27 @@ def inchikeysmiles():
 
     return indigo_inchi.getInchiKey(indigo_inchi.getInchi(m))
 
+@app.route("/inchi/smiles")
+def inchi_to_smiles():
+    indigo = Indigo()
+    indigo_inchi = IndigoInchi(indigo)
+
+    inchi = request.args.get('inchi')
+    inchi = inchi.lstrip()
+    indigo_inchi = IndigoInchi(indigo)
+    mol = indigo_inchi.loadMolecule(inchi)
+
+    return mol.smiles()
+
+@app.route("/smiles/inchi")
+def smiles_to_inchi():
+    indigo = Indigo()
+    indigo_inchi = IndigoInchi(indigo)
+
+    smiles = request.args.get('smiles')
+    m = indigo.loadMolecule(smiles)
+
+    return indigo_inchi.getInchi(m)
 
 @app.route("/structure_similarity/smiles.jsonp")
 def smilessimilarity_jsonp():
