@@ -1,10 +1,7 @@
-from flask import abort, jsonify, render_template, request, redirect, url_for
+from flask import abort, jsonify, render_template, request, redirect, url_for, send_file
 
 from app import app
 
-from indigo import *
-from indigo_renderer import *
-from indigo_inchi import *
 import random
 import uuid
 import string
@@ -12,9 +9,79 @@ import json
 
 from rdkit import Chem
 
-from flask import Flask
-from flask import request
-from flask import send_file
+@app.route("/heartbeat")
+def heartbeat():
+    return "{}"
+
+@app.route("/inchikey")
+def inchikey():
+    if "smiles" in request.values:
+        print("smiles")
+    elif "inchi" in request.values:
+        print("smiles")
+
+    return "{}"
+
+@app.route("/inchi")
+def inchi():
+    if "smiles" in request.values:
+        print("smiles")
+    elif "inchi" in request.values:
+        print("smiles")
+
+    return "{}"
+
+@app.route("/smiles")
+def smiles():
+    if "smiles" in request.values:
+        print("smiles")
+    elif "inchi" in request.values:
+        print("smiles")
+
+    return "{}"
+
+@app.route("/mol")
+def mol():
+    if "smiles" in request.values:
+        print("smiles")
+    elif "inchi" in request.values:
+        print("smiles")
+
+    return "{}"
+
+@app.route("/structuremass")
+def structuremass():
+    if "smiles" in request.values:
+        print("smiles")
+    elif "inchi" in request.values:
+        print("smiles")
+
+    return "{}"
+
+@app.route("/structureimg")
+def structureimg():
+    if "smiles" in request.values:
+        print("smiles")
+    elif "inchi" in request.values:
+        print("smiles")
+
+    return "{}"
+
+@app.route("/structuresimilarity")
+def structuresimilarity():
+    return "{}"
+
+
+@app.route("/structuresimilarityjsonp")
+def structuresimilarityjsonp():
+    return "{}"
+
+
+
+
+
+
+
 
 @app.route("/debug")
 def debug():
@@ -28,12 +95,6 @@ def debug():
     similarity_tanimoto = indigo.similarity(fp, fp, "tanimoto")
 
     return str(similarity_tanimoto)
-
-
-
-@app.route("/heartbeat")
-def heartbeat():
-    return "{}"
 
 @app.route("/structuremass")
 def getstructuremass():
@@ -61,7 +122,6 @@ def getstructuremass():
 
     mol.dearomatize()
 
-
     return_dict = {}
     return_dict["molecularweight"] = mol.molecularWeight()
     return_dict["mostabundantmass"] = mol.mostAbundantMass()
@@ -69,7 +129,6 @@ def getstructuremass():
     return_dict["formula"] = mol.grossFormula()
 
     return json.dumps(return_dict)
-
 
 
 @app.route("/smilesstructure")
@@ -263,6 +322,8 @@ def convert_to_mol():
     m = Chem.MolFromSmiles(smiles_string)
 
     return Chem.MolToMolBlock(m)
+
+
 
 if __name__ == "__main__":
     app.debug = False
