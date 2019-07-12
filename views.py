@@ -26,16 +26,12 @@ def inchikey():
 def inchi():
     if "smiles" in request.values:
         print("smiles")
-    elif "inchi" in request.values:
-        print("smiles")
 
     return "{}"
 
 @app.route("/smiles")
 def smiles():
-    if "smiles" in request.values:
-        print("smiles")
-    elif "inchi" in request.values:
+    if "inchi" in request.values:
         print("smiles")
 
     return "{}"
@@ -43,11 +39,11 @@ def smiles():
 @app.route("/mol")
 def mol():
     if "smiles" in request.values:
-        print("smiles")
+        m = Chem.MolFromSmiles(request.values["smiles"])
     elif "inchi" in request.values:
-        print("smiles")
+        m = Chem.MolFromInchi(request.values["inchi"])
 
-    return "{}"
+    return Chem.MolToMolBlock(m)
 
 @app.route("/structuremass")
 def structuremass():
@@ -65,21 +61,52 @@ def structureimg():
     elif "inchi" in request.values:
         print("smiles")
 
+    #Parsing out size
+    width_string = request.args.get('width')
+    height_string = request.args.get('height')
+    width = 350
+    height = 250
+
+    try:
+        if width_string != None and height_string != None:
+            width = int(width_string)
+            height = int(height_string)
+            if width < 0:
+                width = 350
+            if height < 0:
+                height = 250
+    except ValueError:
+        print("Error")
+
+    
+
     return "{}"
 
 @app.route("/structuresimilarity")
 def structuresimilarity():
-    return "{}"
+    if "smiles1" in request.values:
+        print("smiles1")
+    elif "inchi1" in request.values:
+        print("inchi1")
 
+    if "smiles2" in request.values:
+        print("smiles2")
+    elif "inchi2" in request.values:
+        print("inchi2")
+
+    return "{}"
 
 @app.route("/structuresimilarityjsonp")
 def structuresimilarityjsonp():
     return "{}"
 
 
+@app.route("/structurefingerprint")
+def structurefingerprint():
+    return "{}"
 
 
-
+################ Old Code ####################
 
 
 
@@ -146,8 +173,6 @@ def generatesmilespng():
     height_string = request.args.get('height')
     width = 350
     height = 250
-
-    print(request.args)
 
     try:
         if width_string != None and height_string != None:
