@@ -78,9 +78,11 @@ def structureimg():
     except ValueError:
         print("Error")
 
-    
+    output_filename = os.path.join(structure_images, str(uuid.uuid4) + ".png")
 
-    return "{}"
+    #Write out filename
+
+    return send_file(output_filename, mimetype='image/gif')
 
 @app.route("/structuresimilarity")
 def structuresimilarity():
