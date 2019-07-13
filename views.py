@@ -16,16 +16,16 @@ def heartbeat():
 @app.route("/inchikey")
 def inchikey():
     if "smiles" in request.values:
-        print("smiles")
+        m = Chem.MolFromSmiles(request.values["smiles"])
     elif "inchi" in request.values:
-        print("smiles")
+        m = Chem.MolFromInchi(request.values["inchi"])
 
     return "{}"
 
 @app.route("/inchi")
 def inchi():
     if "smiles" in request.values:
-        print("smiles")
+        m = Chem.MolFromSmiles(request.values["smiles"])
 
     return "{}"
 
@@ -48,18 +48,18 @@ def mol():
 @app.route("/structuremass")
 def structuremass():
     if "smiles" in request.values:
-        print("smiles")
+        m = Chem.MolFromSmiles(request.values["smiles"])
     elif "inchi" in request.values:
-        print("smiles")
+        m = Chem.MolFromInchi(request.values["inchi"])
 
     return "{}"
 
 @app.route("/structureimg")
 def structureimg():
     if "smiles" in request.values:
-        print("smiles")
+        m = Chem.MolFromSmiles(request.values["smiles"])
     elif "inchi" in request.values:
-        print("smiles")
+        m = Chem.MolFromInchi(request.values["inchi"])
 
     #Parsing out size
     width_string = request.args.get('width')
