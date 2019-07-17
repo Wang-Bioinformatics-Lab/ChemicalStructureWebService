@@ -16,25 +16,19 @@ def heartbeat():
 @app.route("/inchikey")
 def inchikey():
     if "smiles" in request.values:
-        m = Chem.MolFromSmiles(request.values["smiles"])
+        inchikey = str(Chem.MolToInchiKey(Chem.MolFromSmiles(request.values["smiles"])))
     elif "inchi" in request.values:
-        m = Chem.MolFromInchi(request.values["inchi"])
+        inchikey = str(Chem.InchiToInchiKey(request.values["inchi"]))
 
-    return "{}"
+    return inchikey
 
 @app.route("/inchi")
 def inchi():
-    if "smiles" in request.values:
-        m = Chem.MolFromSmiles(request.values["smiles"])
-
-    return "{}"
+    return str(Chem.MolToInchi(Chem.MolFromSmiles(request.values["smiles"])))
 
 @app.route("/smiles")
 def smiles():
-    if "inchi" in request.values:
-        print("smiles")
-
-    return "{}"
+    return str(Chem.InchiToInchi(request.values["inchi"]))
 
 @app.route("/mol")
 def mol():
