@@ -1,105 +1,153 @@
 from flask import abort, jsonify, render_template, request, redirect, url_for, send_file
 
 from app import app
-
+import os
 import random
 import uuid
 import string
 import json
 
 from rdkit import Chem
+from rdkit.Chem import AllChem
+from rdkit.Chem.Descriptors import ExactMolWt
+from rdkit.Chem.Draw import MolToImage
+from rdkit.DataStructs import FingerprintSimilarity
+from rdkit.Chem.Fingerprints.FingerprintMols import FingerprintMol
 
+# simple test run
+# input: NADA
+# output: NADA
 @app.route("/heartbeat")
 def heartbeat():
     return "{}"
 
+# get inchikey using either smiles or inchi
+# input: smiles / inchi
+# output: inchikey
 @app.route("/inchikey")
 def inchikey():
+    inchikey = ""
     if "smiles" in request.values:
         inchikey = str(Chem.MolToInchiKey(Chem.MolFromSmiles(request.values["smiles"])))
     elif "inchi" in request.values:
         inchikey = str(Chem.InchiToInchiKey(request.values["inchi"]))
-
+    else:
+        return {"message":"please input inchi or smiles"}, 400
     return inchikey
 
+# get inchi using smiles
+# input: smiles
+# output: inchi
 @app.route("/inchi")
 def inchi():
+    if "smiles" not in request.values:
+        return {"message":"please input smiles"}, 400
     return str(Chem.MolToInchi(Chem.MolFromSmiles(request.values["smiles"])))
 
+# get smiles using inchi
+# input: inchi
+# output: smiles
 @app.route("/smiles")
 def smiles():
-    return str(Chem.InchiToInchi(request.values["inchi"]))
+    if "inchi" not in request.values:
+        return {"message":"please input inchi"}, 400
+    return str(Chem.InchiToSmiles(request.values["inchi"]))
 
+# input: inchi / smiles
+# output: mol
 @app.route("/mol")
 def mol():
     if "smiles" in request.values:
         m = Chem.MolFromSmiles(request.values["smiles"])
     elif "inchi" in request.values:
         m = Chem.MolFromInchi(request.values["inchi"])
-
+    else:
+        return {"message":"please input inchi or smiles"}, 400
     return Chem.MolToMolBlock(m)
 
+# input: inchi / smiles
+# output : mass (float)
+# todo: keep the first token of smiles
+# inchi ignore for now
 @app.route("/structuremass")
 def structuremass():
     if "smiles" in request.values:
         m = Chem.MolFromSmiles(request.values["smiles"])
     elif "inchi" in request.values:
         m = Chem.MolFromInchi(request.values["inchi"])
+    else:
+        return {"message":"please input inchi or smiles"}, 400
+    return str(ExactMolWt(m))
 
-    return "{}"
 
+# draw the image of structure
+# rdkit
+# input: smiles or inchi, width, height
 @app.route("/structureimg")
 def structureimg():
     if "smiles" in request.values:
         m = Chem.MolFromSmiles(request.values["smiles"])
     elif "inchi" in request.values:
         m = Chem.MolFromInchi(request.values["inchi"])
-
+    else:
+        return {"message":"please input inchi"}, 400
     #Parsing out size
-    width_string = request.args.get('width')
-    height_string = request.args.get('height')
     width = 350
     height = 250
-
-    try:
-        if width_string != None and height_string != None:
-            width = int(width_string)
-            height = int(height_string)
-            if width < 0:
-                width = 350
-            if height < 0:
-                height = 250
-    except ValueError:
-        print("Error")
-
-    output_filename = os.path.join(structure_images, str(uuid.uuid4) + ".png")
-
-    #Write out filename
-
+    if "width" in request.values:
+        try:
+            if float(request.args.get('width')) > 0:
+                width = float(request.args.get('width'))
+        except:
+            pass
+    if "height" in request.values:
+        try:
+            if float(request.args.get('height')) > 0:
+                height = float(request.args.get('height'))
+        except:
+            pass
+    structure_images = MolToImage(m, subImgSize=(width, height), legends=None)
+    output_filename = os.path.join("structure_images", str(uuid.uuid4()) + ".png")
+    structure_images.save(output_filename)
     return send_file(output_filename, mimetype='image/gif')
 
+
+# rdkit
 @app.route("/structuresimilarity")
 def structuresimilarity():
     if "smiles1" in request.values:
-        print("smiles1")
+        mol1 = Chem.MolFromSmiles(request.values["smiles1"])
     elif "inchi1" in request.values:
-        print("inchi1")
+        mol1 = Chem.MolFromSmiles(request.values["inchi1"])
+    else:
+        return {"message":"unable to import structure 1."}, 400
 
     if "smiles2" in request.values:
-        print("smiles2")
+        mol2 = Chem.MolFromSmiles(request.values["smiles2"])
     elif "inchi2" in request.values:
-        print("inchi2")
+        mol2 = Chem.MolFromSmiles(request.values["inchi2"])
+    else:
+        return {"message":"unable to import structure 2."},400
 
-    return "{}"
+    return str(FingerprintSimilarity(FingerprintMol(mol1),FingerprintMol(mol2)))
 
+
+# ignore below functions
 @app.route("/structuresimilarityjsonp")
 def structuresimilarityjsonp():
     return "{}"
 
-
+# from inchi, smiles, get fingerprint
+# circular/Morgan fingerprint with 512 bits
 @app.route("/structurefingerprint")
 def structurefingerprint():
-    return "{}"
+    if "smiles" in request.values:
+        mol = Chem.MolFromSmiles(request.values["smiles"])
+    elif "inchi" in request.values:
+        mol = Chem.MolFromSmiles(request.values["inchi"])
+    else:
+        return {"message":"please input inchi or smiles"}, 400
+    return AllChem.GetMorganFingerprintAsBitVect(mol, radius=2, nBits=512).ToBitString()
 
 
 ################ Old Code ####################
