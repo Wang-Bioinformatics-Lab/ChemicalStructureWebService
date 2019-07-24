@@ -51,9 +51,11 @@ def inchi():
 def smiles():
     if "inchi" not in request.values:
         return {"message":"please input inchi"}, 400
+    mol = Chem.MolFromInchi(request.values["inchi"])
+    if not mol:
+        return {"message":"structure cant be identified"}, 400
+    return str(Chem.MolToSmiles(mol))
 
-        MolToSmiles
-    return str(Chem.MolToSmiles(Chem.MolFromInchi(request.values["inchi"])))
 
 # input: inchi / smiles
 # output: mol
@@ -65,6 +67,8 @@ def mol():
         m = Chem.MolFromInchi(request.values["inchi"])
     else:
         return {"message":"please input inchi or smiles"}, 400
+    if not m:
+        return {"message":"structure cant be identified"}, 400
     return Chem.MolToMolBlock(m)
 
 # input: inchi / smiles
@@ -79,6 +83,8 @@ def structuremass():
         m = Chem.MolFromInchi(request.values["inchi"])
     else:
         return {"message":"please input inchi or smiles"}, 400
+    if not m:
+        return {"message":"structure cant be identified"}, 400
     return str(ExactMolWt(m))
 
 
@@ -92,7 +98,9 @@ def structureimg():
     elif "inchi" in request.values:
         m = Chem.MolFromInchi(request.values["inchi"])
     else:
-        return {"message":"please input inchi"}, 400
+        return {"message":"please input inchi or smiles"}, 400
+    if not m:
+        return {"message":"structure cant be identified"}, 400
     #Parsing out size
     width = 350
     height = 250
@@ -108,6 +116,7 @@ def structureimg():
                 height = float(request.args.get('height'))
         except:
             pass
+    print (width,height)
     structure_images = MolToImage(m, subImgSize=(width, height), legends=None)
     output_filename = os.path.join("structure_images", str(uuid.uuid4()) + ".png")
     structure_images.save(output_filename)
@@ -120,15 +129,19 @@ def structuresimilarity():
     if "smiles1" in request.values:
         mol1 = Chem.MolFromSmiles(request.values["smiles1"])
     elif "inchi1" in request.values:
-        mol1 = Chem.MolFromSmiles(request.values["inchi1"])
+        mol1 = Chem.MolFromInchi(request.values["inchi1"])
     else:
+        return {"message":"please input inchi or smiles"}, 400
+    if not mol1:
         return {"message":"unable to import structure 1."}, 400
 
     if "smiles2" in request.values:
         mol2 = Chem.MolFromSmiles(request.values["smiles2"])
     elif "inchi2" in request.values:
-        mol2 = Chem.MolFromSmiles(request.values["inchi2"])
+        mol2 = Chem.MolFromInchi(request.values["inchi2"])
     else:
+        return {"message":"please input inchi or smiles"}, 400
+    if not mol2:
         return {"message":"unable to import structure 2."},400
 
     return str(FingerprintSimilarity(FingerprintMol(mol1),FingerprintMol(mol2)))
@@ -147,8 +160,8 @@ def structurefingerprint():
         mol = Chem.MolFromSmiles(request.values["smiles"])
     elif "inchi" in request.values:
         mol = Chem.MolFromSmiles(request.values["inchi"])
-    else:
-        return {"message":"please input inchi or smiles"}, 400
+    if not mol:
+        return {"message":"unable to import structure."},400
     return AllChem.GetMorganFingerprintAsBitVect(mol, radius=2, nBits=512).ToBitString()
 
 
