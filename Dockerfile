@@ -10,6 +10,8 @@ RUN pip3 install flask
 RUN pip3 install gunicorn
 RUN pip3 install Pillow
 RUN pip3 install requests
+RUN pip3 install matplotlib
+RUN pip3 install cairocffi
 
 COPY . /app
 WORKDIR /app
