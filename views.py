@@ -56,6 +56,7 @@ def smiles():
         return {"message":"structure cant be identified"}, 400
     return str(Chem.MolToSmiles(mol))
 
+
 # input: inchi / smiles
 # output: mol
 @app.route("/mol")
