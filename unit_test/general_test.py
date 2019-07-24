@@ -1,12 +1,12 @@
 import requests
 import math
-baseurl = "http://0.0.0.0:5000/"
+baseurl = "http://localhost:5000/"
 
 def unit_test(endpoint,expected_to_params):
     for (expectedVal, params) in expected_to_params:
         r = requests.get(baseurl+endpoint,params=params)
         if r.status_code == 500:
-            print("error:",endpoint,"server down")
+            print("error:",endpoint,"server error")
             return
         if str(r.status_code) == expectedVal:
             continue
