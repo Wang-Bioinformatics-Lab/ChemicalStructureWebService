@@ -51,7 +51,9 @@ def inchi():
 def smiles():
     if "inchi" not in request.values:
         return {"message":"please input inchi"}, 400
-    return str(Chem.InchiToSmiles(request.values["inchi"]))
+
+        MolToSmiles
+    return str(Chem.MolToSmiles(Chem.MolFromInchi(request.values["inchi"])))
 
 # input: inchi / smiles
 # output: mol
