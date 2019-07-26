@@ -14,6 +14,8 @@ from rdkit.Chem.Draw import MolToImage
 from rdkit.DataStructs import FingerprintSimilarity
 from rdkit.Chem.Fingerprints.FingerprintMols import FingerprintMol
 
+from decorators import rdkit_handle_error
+
 # simple test run
 # input: NADA
 # output: NADA
@@ -25,6 +27,7 @@ def heartbeat():
 # input: smiles / inchi
 # output: inchikey
 @app.route("/inchikey")
+@rdkit_handle_error
 def inchikey():
     inchikey = ""
     if "smiles" in request.values:
@@ -39,6 +42,7 @@ def inchikey():
 # input: smiles
 # output: inchi
 @app.route("/inchi")
+@rdkit_handle_error
 def inchi():
     if "smiles" not in request.values:
         return {"message":"please input smiles"}, 400
@@ -48,6 +52,7 @@ def inchi():
 # input: inchi
 # output: smiles
 @app.route("/smiles")
+@rdkit_handle_error
 def smiles():
     if "inchi" not in request.values:
         return {"message":"please input inchi"}, 400
@@ -60,6 +65,7 @@ def smiles():
 # input: inchi / smiles
 # output: mol
 @app.route("/mol")
+@rdkit_handle_error
 def mol():
     if "smiles" in request.values:
         m = Chem.MolFromSmiles(request.values["smiles"])
@@ -76,6 +82,7 @@ def mol():
 # todo: keep the first token of smiles
 # inchi ignore for now
 @app.route("/structuremass")
+@rdkit_handle_error
 def structuremass():
     if "smiles" in request.values:
         m = Chem.MolFromSmiles(request.values["smiles"])
@@ -92,6 +99,7 @@ def structuremass():
 # rdkit
 # input: smiles or inchi, width, height
 @app.route("/structureimg")
+@rdkit_handle_error
 def structureimg():
     if "smiles" in request.values:
         m = Chem.MolFromSmiles(request.values["smiles"])
@@ -125,6 +133,7 @@ def structureimg():
 
 # rdkit
 @app.route("/structuresimilarity")
+@rdkit_handle_error
 def structuresimilarity():
     if "smiles1" in request.values:
         mol1 = Chem.MolFromSmiles(request.values["smiles1"])
@@ -155,6 +164,7 @@ def structuresimilarityjsonp():
 # from inchi, smiles, get fingerprint
 # circular/Morgan fingerprint with 512 bits
 @app.route("/structurefingerprint")
+@rdkit_handle_error
 def structurefingerprint():
     if "smiles" in request.values:
         mol = Chem.MolFromSmiles(request.values["smiles"])
