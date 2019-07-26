@@ -1,17 +1,13 @@
-FROM mcs07/rdkit:latest
+FROM continuumio/miniconda3:latest
 
 MAINTAINER Mingxun Wang "mwang87@gmail.com"
 
+WORKDIR /app
+COPY requirements.txt /app
 RUN apt-get update -y
-RUN apt-get install -y python3-pip python3-dev build-essential
-RUN apt-get install -y default-jre
+RUN conda create -n rdkit -c rdkit rdkit
+RUN apt-get install -y libxrender-dev
 
-RUN pip3 install flask
-RUN pip3 install gunicorn
-RUN pip3 install Pillow
-RUN pip3 install requests
-RUN pip3 install matplotlib
-RUN pip3 install cairocffi
+RUN /bin/bash -c "source activate rdkit && pip install -r requirements.txt"
 
 COPY . /app
-WORKDIR /app
