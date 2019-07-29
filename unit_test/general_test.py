@@ -1,12 +1,12 @@
 import requests
 import math
-baseurl = "http://0.0.0.0:5000/"
+baseurl = "http://localhost:5066/"
 
 def unit_test(endpoint,expected_to_params):
     for (expectedVal, params) in expected_to_params:
         r = requests.get(baseurl+endpoint,params=params)
         if r.status_code == 500:
-            print("error:",endpoint,"server down")
+            print("error:",endpoint,"server error")
             return
         if str(r.status_code) == expectedVal:
             continue
@@ -25,6 +25,7 @@ def main():
     smiles_params = {"smiles":"CCO"}
     bad_inchi_params =  {"inchi":"InChI=1431H3&334213"}
     bad_smiles_params = {"smiles":"CCO**"}
+    worse_smiles_params = {"smiles": "CcccC12c1"}
     smiles = "CCO"
     inchi = "InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"
     inchikey = "LFQSCWFLJHTTHZ-UHFFFAOYSA-N"
@@ -33,10 +34,14 @@ def main():
                           # bad param error
                           ("400",None),
                           ("",bad_smiles_params),
-                          ("None",bad_inchi_params)])
+                          ("None",bad_inchi_params),
+                          ("400", worse_smiles_params)
+                          ])
     unit_test("inchi", [(inchi,smiles_params),
                           ("400",None),
-                          ("",bad_smiles_params)])
+                          ("",bad_smiles_params),
+                          ("400", worse_smiles_params)
+                          ])
 
     unit_test("smiles", [(smiles,inchi_params),
                           ("400",None),

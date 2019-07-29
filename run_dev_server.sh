@@ -1,3 +1,3 @@
 #!/bin/bash
-
-python3 ./main.py
+source activate rdkit
+python ./main.py

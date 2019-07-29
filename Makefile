@@ -12,3 +12,6 @@ dev-server:
 
 bash:
 	docker run --rm -it -p 5066:5000 --name chemicalwebservice_rdkit chemicalwebservice_rdkit bash
+
+attach:
+	docker exec -it chemicalwebservice_rdkit /bin/bash
