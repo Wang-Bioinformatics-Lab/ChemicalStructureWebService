@@ -1,6 +1,8 @@
 import requests
 import math
-baseurl = "http://localhost:5066/"
+import random
+#baseurl = "http://localhost:5066/"
+baseurl = "http://localhost:5000/"
 
 def unit_test(endpoint,expected_to_params):
     for (expectedVal, params) in expected_to_params:
@@ -10,6 +12,12 @@ def unit_test(endpoint,expected_to_params):
             return
         if str(r.status_code) == expectedVal:
             continue
+        # add size testing for the images
+        if endpoint == "structureimg":
+             with open("download_%s.png"%(random.randint(1,1000)), 'wb') as f:
+                for chunk in r:
+                    f.write(chunk)
+
         if expectedVal == "":
             continue
         if r.text.strip()!= expectedVal:
@@ -59,12 +67,18 @@ def main():
                               ("400",{"smiles":"badsmiles"}),
                               ("400",{"inchi":"badinchi"})])
 
-    width_param = {"wdith":-100}
-    height_param = {"height":-100}
+    bad_width_param = {"wdith":-100}
+    bad_height_param = {"height":-100}
+    # some good dimension params
+    good_height_param = {"height":30}
+    good_width_param = {"width":40}
+
     unit_test("structureimg", [    ("",inchi_params),
                               ("",smiles_params),
-                              ("",smiles_params.update(width_param)),
-                              ("",smiles_params.update(height_param)),
+                              ("",{**smiles_params,**bad_height_param,**bad_width_param}),
+                              ("",{**inchi_params,**bad_height_param,**bad_width_param}),
+                              ("",{**smiles_params,**good_height_param,**good_width_param}),
+                              ("",{**inchi_params,**bad_width_param}),
                               ("400",None),
                               ("400",{"smiles":"badsmiles"}),
                               ("400",{"inchi":"badinchi"})])
