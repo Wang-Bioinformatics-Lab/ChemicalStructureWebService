@@ -130,8 +130,11 @@ def structureimg():
         except:
             pass
     print (width,height)
-    structure_images = MolToImage(m, subImgSize=(width, height), legends=None)
+    structure_images = MolToImage(m, size=(int(width), int(height)),\
+                                  subImgSize=(int(width), int(height)), \
+                                  fitImage=True, legends=None)
     output_filename = os.path.join("structure_images", str(uuid.uuid4()) + ".png")
+    print(structure_images.size)
     structure_images.save(output_filename)
     return send_file(output_filename, mimetype='image/gif')
 
