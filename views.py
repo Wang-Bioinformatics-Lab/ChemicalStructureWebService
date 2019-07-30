@@ -6,6 +6,7 @@ import random
 import uuid
 import string
 import json
+import requests
 
 from rdkit import Chem
 from rdkit.Chem import AllChem
@@ -44,9 +45,13 @@ def inchikey():
 @app.route("/inchi")
 @rdkit_handle_error
 def inchi():
-    if "smiles" not in request.values:
+    if "smiles" in request.values:
+        return str(Chem.MolToInchi(Chem.MolFromSmiles(request.values["smiles"])))
+    elif "inchikey" in request.values:
+        return str(Chem.MolToInchi(Chem.MolFromSmiles(cactus_inchikey_lookup(request.values["smiles"]))))
+    else:
         return {"message":"please input smiles"}, 400
-    return str(Chem.MolToInchi(Chem.MolFromSmiles(request.values["smiles"])))
+    
 
 # get smiles using inchi
 # input: inchi
@@ -174,6 +179,15 @@ def structurefingerprint():
         return {"message":"unable to import structure."},400
     return AllChem.GetMorganFingerprintAsBitVect(mol, radius=2, nBits=512).ToBitString()
 
+
+def cactus_inchikey_lookup(inchikey):
+    url = "https://cactus.nci.nih.gov/chemical/structure/{0}/smiles".format(inchikey)
+    r = requests.get(url)
+    if r.ok:
+        smiles = r.text.split()
+        if smiles:
+            return smiles[0]
+    return None
 
 ################ Old Code ####################
 
