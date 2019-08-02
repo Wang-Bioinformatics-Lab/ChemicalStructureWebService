@@ -8,6 +8,7 @@ def unit_test(endpoint,expected_to_params):
     for (expectedVal, params) in expected_to_params:
         r = requests.get(baseurl+endpoint,params=params)
         if r.status_code == 500:
+            print(f"\u274C FAILED: {endpoint} - {params}")
             print("error:",endpoint,"server error")
             return
 
@@ -41,18 +42,26 @@ def main():
     smiles = "CCO"
     inchi = "InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"
     inchikey = "LFQSCWFLJHTTHZ-UHFFFAOYSA-N"
+    convert = '{"inchi":"InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3","inchikey":"LFQSCWFLJHTTHZ-UHFFFAOYSA-N","molblock":"\\n     RDKit          2D\\n\\n  3  2  0  0  0  0  0  0  0  0999 V2000\\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\\n    1.2990    0.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\\n    2.5981   -0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\\n  1  2  1  0\\n  2  3  1  0\\nM  END\\n","smiles":"CCO"}'
+    unit_test("convert",[(convert,smiles_params),
+                         (convert,inchi_params),
+                         ("400",None),
+                         ("400",bad_smiles_params),
+                         ("400",bad_inchi_params),
+                         ("400",worse_smiles_params)
+                        ])
     unit_test("inchikey",[(inchikey,inchi_params),
                           (inchikey,smiles_params),
                           # bad param error
                           ("400",None),
                           ("",bad_smiles_params),
-                          ("None",bad_inchi_params),
-                          ("400", worse_smiles_params)
+                          ("400",bad_inchi_params),
+                          ("400",worse_smiles_params)
                           ])
     unit_test("inchi", [(inchi,smiles_params),
                           ("400",None),
                           ("",bad_smiles_params),
-                          ("400", worse_smiles_params)
+                          ("400",worse_smiles_params)
                           ])
 
     unit_test("smiles", [(smiles,inchi_params),
