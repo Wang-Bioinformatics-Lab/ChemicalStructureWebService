@@ -15,3 +15,6 @@ bash:
 
 attach:
 	docker exec -it chemicalwebservice_rdkit /bin/bash
+
+test:
+	docker exec -it chemicalwebservice_rdkit python /app/unit_test/general_test.py
