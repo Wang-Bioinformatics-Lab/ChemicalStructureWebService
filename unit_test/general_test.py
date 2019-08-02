@@ -10,19 +10,23 @@ def unit_test(endpoint,expected_to_params):
         if r.status_code == 500:
             print("error:",endpoint,"server error")
             return
-        if str(r.status_code) == expectedVal:
-            continue
-        # add size testing for the images
+
+        #  TODO: add size testing for the images
         if endpoint == "structureimg":
-             with open("download_%s.png"%(random.randint(1,1000)), 'wb') as f:
+             with open("download_%s.svg"%(random.randint(1,1000)), 'wb') as f:
                 for chunk in r:
                     f.write(chunk)
 
-        if expectedVal == "":
+        if str(r.status_code) == expectedVal or expectedVal == "":
+            print(f"\u2713 PASSED: {endpoint} - {params}")
             continue
+
         if r.text.strip()!= expectedVal:
+            print(f"\u274C FAILED: {endpoint} - {params}")
             print(endpoint,params,r.text,",but should get ",expectedVal)
             continue
+        # Show tests which pass
+        print(f"\u2713 PASSED: {endpoint} - {params}")
 
 
 # end point is heartbeat

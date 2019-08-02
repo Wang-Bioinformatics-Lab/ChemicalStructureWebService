@@ -11,7 +11,7 @@ import requests
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem.Descriptors import ExactMolWt
-from rdkit.Chem.Draw import MolToImage
+from rdkit.Chem.Draw import MolToFile
 from rdkit.DataStructs import FingerprintSimilarity
 from rdkit.Chem.Fingerprints.FingerprintMols import FingerprintMol
 
@@ -130,13 +130,11 @@ def structureimg():
         except:
             pass
     print (width,height)
-    structure_images = MolToImage(m, size=(int(width), int(height)),\
+    output_filename = os.path.join("structure_images", str(uuid.uuid4()) + ".svg")
+    structure_images = MolToFile(m, output_filename, size=(int(width), int(height)),\
                                   subImgSize=(int(width), int(height)), \
-                                  fitImage=True, legends=None)
-    output_filename = os.path.join("structure_images", str(uuid.uuid4()) + ".png")
-    print(structure_images.size)
-    structure_images.save(output_filename)
-    return send_file(output_filename, mimetype='image/gif')
+                                  fitImage=True, legends=None, imageType="svg")
+    return send_file(output_filename, mimetype='image/svg+xml')
 
 
 # rdkit
