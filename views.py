@@ -130,14 +130,28 @@ def structureimg():
         except:
             pass
     print (width,height)
-    output_filename = os.path.join("structure_images", str(uuid.uuid4()) + ".svg")
-    structure_images = MolToFile(m, output_filename, size=(int(width), int(height)),\
-                                  subImgSize=(int(width), int(height)), \
+    uuid_key = str(uuid.uuid4())
+    output_svg = os.path.join("structure_images", uuid_key + ".svg")
+
+    #TODO: The following is a hack to render at a small resolution and then scale up when we raster, it makes everything look a lot nicer
+    #We should obey the aspect ratio when rendering at low resolution, but thats something we gotta do
+
+    # structure_images = MolToFile(m, output_svg, size=(int(width), int(height)),\
+    #                               subImgSize=(int(width), int(height)), \
+    #                               fitImage=True, legends=None, imageType="svg")
+    structure_images = MolToFile(m, output_svg, size=(350, 250),\
+                                  subImgSize=(350, 250), \
                                   fitImage=True, legends=None, imageType="svg")
-    return send_file(output_filename, mimetype='image/svg+xml')
 
+    #return send_file(output_svg, mimetype='image/svg+xml')
+    output_png = os.path.join("structure_images", uuid_key + ".png")
+    cmd = "inkscape -z -e {} -w {} -h {} {}".format(output_png, width, int(250/350 * width), output_svg)
+    os.system(cmd)
 
-# rdkit
+    return send_file(output_png, mimetype='image/png')
+    
+
+# Calculates the structural similarity
 @app.route("/structuresimilarity")
 @rdkit_handle_error
 def structuresimilarity():
@@ -160,7 +174,6 @@ def structuresimilarity():
         return {"message":"unable to import structure 2."},400
 
     return str(FingerprintSimilarity(FingerprintMol(mol1),FingerprintMol(mol2)))
-
 
 # ignore below functions
 @app.route("/structuresimilarityjsonp")

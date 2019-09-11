@@ -1,8 +1,9 @@
 import requests
 import math
 import random
-#baseurl = "http://localhost:5066/"
-baseurl = "http://localhost:5000/"
+
+baseurl = "http://localhost:5066/"
+#baseurl = "http://localhost:5000/"
 
 def unit_test(endpoint,expected_to_params):
     for (expectedVal, params) in expected_to_params:
