@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  chemicalwebservice_rdkit:
+    build: .
+    ports:
+      - "5066:5000"
+    command: /app/run_server.sh
