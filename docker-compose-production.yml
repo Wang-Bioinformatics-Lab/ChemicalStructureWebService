@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  redu-ms2-web:
+  chemicalwebservice_rdkit:
     networks:
       - default
       - nginx-net
