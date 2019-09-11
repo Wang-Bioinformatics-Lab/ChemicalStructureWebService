@@ -139,14 +139,24 @@ def structureimg():
     # structure_images = MolToFile(m, output_svg, size=(int(width), int(height)),\
     #                               subImgSize=(int(width), int(height)), \
     #                               fitImage=True, legends=None, imageType="svg")
+    
     structure_images = MolToFile(m, output_svg, size=(350, 250),\
                                   subImgSize=(350, 250), \
                                   fitImage=True, legends=None, imageType="svg")
 
     #return send_file(output_svg, mimetype='image/svg+xml')
+
+    #Cairo Conversion
+    import cairosvg
     output_png = os.path.join("structure_images", uuid_key + ".png")
-    cmd = "inkscape -z -e {} -w {} -h {} {}".format(output_png, width, int(250/350 * width), output_svg)
-    os.system(cmd)
+    cairosvg.svg2png(url=output_svg, write_to=output_png, output_width=width, output_height=int(250/350 * width))
+
+    return send_file(output_png, mimetype='image/png')
+    
+    #Inkscape Conversion
+    # output_png = os.path.join("structure_images", uuid_key + ".png")
+    # cmd = "inkscape -z -e {} -w {} -h {} {}".format(output_png, width, int(250/350 * width), output_svg)
+    # os.system(cmd)
 
     return send_file(output_png, mimetype='image/png')
     
