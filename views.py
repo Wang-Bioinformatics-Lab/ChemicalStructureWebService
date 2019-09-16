@@ -14,6 +14,7 @@ from rdkit.Chem.Descriptors import ExactMolWt
 from rdkit.Chem.Draw import MolToFile
 from rdkit.DataStructs import FingerprintSimilarity
 from rdkit.Chem.Fingerprints.FingerprintMols import FingerprintMol
+from rdkit.Chem.rdMolDescriptors import CalcMolFormula
 
 from decorators import rdkit_handle_error
 
@@ -84,8 +85,6 @@ def mol():
 
 # input: inchi / smiles
 # output : mass (float)
-# todo: keep the first token of smiles
-# inchi ignore for now
 @app.route("/structuremass")
 @rdkit_handle_error
 def structuremass():
@@ -98,6 +97,21 @@ def structuremass():
     if not m:
         return {"message":"structure cant be identified"}, 400
     return str(ExactMolWt(m))
+
+# input: inchi / smiles
+# output : formula 
+@app.route("/formula")
+@rdkit_handle_error
+def formula():
+    if "smiles" in request.values:
+        m = Chem.MolFromSmiles(request.values["smiles"])
+    elif "inchi" in request.values:
+        m = Chem.MolFromInchi(request.values["inchi"])
+    else:
+        return {"message":"please input inchi or smiles"}, 400
+    if not m:
+        return {"message":"structure cant be identified"}, 400
+    return str(CalcMolFormula(m))
 
 
 # draw the image of structure
