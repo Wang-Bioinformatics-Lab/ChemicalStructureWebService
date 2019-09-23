@@ -40,6 +40,23 @@ def inchikey():
         return {"message":"please input inchi or smiles"}, 400
     return inchikey
 
+# get classyfire using either smiles or inchi
+# input: smiles / inchi
+# output: classyfire
+@app.route("/classyfire")
+@rdkit_handle_error
+def classyfire():
+    inchikey = ""
+    if "smiles" in request.values:
+        inchikey = str(Chem.MolToInchiKey(Chem.MolFromSmiles(request.values["smiles"])))
+    elif "inchi" in request.values:
+        inchikey = str(Chem.InchiToInchiKey(request.values["inchi"]))
+    else:
+        return {"message":"please input inchi or smiles"}, 400
+    
+    r = requests.get("https://gnps-classyfire.ucsd.edu/entities?inchikey={}".format(inchikey))
+    return r.text, r.status_code
+
 # get inchi using smiles
 # input: smiles
 # output: inchi
