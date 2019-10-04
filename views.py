@@ -234,6 +234,19 @@ def structurefingerprint():
         return {"message":"unable to import structure."},400
     return AllChem.GetMorganFingerprintAsBitVect(mol, radius=2, nBits=512).ToBitString()
 
+# get inchi using smiles
+# input: inchikey
+# output: smiles
+@app.route("/inchikeyresolver")
+@rdkit_handle_error
+def inchikeyresolver():
+    inchikey = request.values["inchikey"]
+    smiles = cactus_inchikey_lookup(inchikey)
+
+    if smiles is None:
+        return "", 404
+
+    return smiles
 
 def cactus_inchikey_lookup(inchikey):
     url = "https://cactus.nci.nih.gov/chemical/structure/{0}/smiles".format(inchikey)
