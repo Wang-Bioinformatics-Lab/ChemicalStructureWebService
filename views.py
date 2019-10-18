@@ -54,7 +54,7 @@ def classyfire():
     else:
         return {"message":"please input inchi or smiles"}, 400
     
-    r = requests.get("https://gnps-classyfire.ucsd.edu/entities?inchikey={}".format(inchikey))
+    r = requests.get("https://gnps-classyfire.ucsd.edu/entities/{}.json".format(inchikey))
     return r.text, r.status_code
 
 # get inchi using smiles
