@@ -18,6 +18,11 @@ from rdkit.Chem.rdMolDescriptors import CalcMolFormula
 
 from decorators import rdkit_handle_error
 
+
+@app.route("/")
+def homepage():
+    return "Welcome to the chemical structure server, use our tools! This page under construction"
+
 # simple test run
 # input: NADA
 # output: NADA
