@@ -1,0 +1,31 @@
+name: unittest
+
+on: 
+  push:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Install dependencies
+      run: |
+        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+        bash miniconda.sh -b -p $HOME/miniconda
+        export PATH="$HOME/miniconda/bin:$PATH"
+        conda config --set always_yes yes --set changeps1 no
+        conda update -q conda
+        conda create -n rdkit -c rdkit rdkit
+        echo "source activate rdkit" > ~/.bashrc
+    - name: Test with nose2
+      run: |
+        export PATH="$HOME/miniconda/bin:$PATH"
+        source ~/.bashrc
+        pip install requirements.txt
+        cd test	&& nose2 -v

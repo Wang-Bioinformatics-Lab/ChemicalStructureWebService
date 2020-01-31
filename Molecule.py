@@ -32,6 +32,7 @@ class Molecule(object):
         self._formula = None
 
         # initial RDKit mol based on input
+        # TODO: Perform fancy try catch statements here to see which one works
         if smiles:
             self._smiles = smiles
             self.mol = Chem.MolFromSmiles(smiles)
