@@ -2,9 +2,11 @@ server-compose-build:
 	docker-compose build
 
 server-compose-interactive:
+	docker-compose build
 	docker-compose up
 
 server-compose-server:
+	docker-compose build
 	docker-compose up -d
 
 server-compose-production:

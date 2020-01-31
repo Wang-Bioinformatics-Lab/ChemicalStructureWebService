@@ -124,6 +124,8 @@ class Molecule(object):
             raise TypeError(f"imageType must be in {IMAGE_TYPES}")
         if not os.path.exists(os.path.dirname(path)):
             raise OSError("Base directory does not exist")
+
+        #TODO: bring in information to save out to svg and png
         MolToFile(self.mol, path, size=(width,height), subImgSize=(width, height), fitImage=True, legends=None, imageType=img_type)
 
     def export_structure(self) -> dict:

@@ -5,6 +5,7 @@ services:
     networks:
       - default
       - nginx-net
+    command: /app/run_server.sh
     environment:
       VIRTUAL_HOST: gnps-structure.ucsd.edu
       VIRTUAL_PORT: 5066

@@ -23,5 +23,12 @@ def test_molecule():
         if inchikey == "0":
             inchikey = None
         
-        if expected_success == "1":
-            m = Molecule.Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey)
+       
+        m = Molecule.Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey)
+        assessment = ""
+        if m:
+            assessment = "1"
+        else:
+            assessment = "0"
+        print(test_case, assessment)
+        assert(str(expected_success) == assessment)
