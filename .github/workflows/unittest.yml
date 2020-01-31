@@ -27,5 +27,5 @@ jobs:
       run: |
         export PATH="$HOME/miniconda/bin:$PATH"
         source ~/.bashrc
-        pip install requirements.txt
+        pip install -r requirements.txt
         cd test	&& nose2 -v
