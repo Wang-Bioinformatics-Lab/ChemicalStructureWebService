@@ -1,0 +1,71 @@
+(% extends "minimal.html" %)
+
+(% block content %)
+
+<div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6 text-center">
+        <h2>Chemical Structure Converter</h2>
+    </div>
+    <div class="col-sm-3"></div>
+</div>
+
+<hr>
+
+<div id="displayer">
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-10">
+            <div class="row">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-4">
+                    <div class="text-center" >
+                        <input type="text" class="form-control" name="identifier" id="identifier" placeholder="Enter Spectrum Identifier">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="text-center" >
+                        <button id="analyzebutton" class="btn btn-primary btn-sm btn-block" onclick="convertStructure()" >Convert Structure</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-1" ></div>
+    </div>
+</div>
+
+<hr>
+
+
+<script>
+    function convertStructure() {
+        $.get({
+
+        })
+    }
+
+    var input = document.getElementById("identifier");
+    var input1 = document.getElementById("identifier1")
+    var input2 = document.getElementById("identifier2")
+    input.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("analyzebutton").click();
+        }
+    });
+    input1.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("analyzebutton").click();
+        }
+    });
+    input2.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("analyzebutton").click();
+        }
+    });
+</script>
+
+(% endblock %)
+

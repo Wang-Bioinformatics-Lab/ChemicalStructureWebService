@@ -30,7 +30,7 @@ def molecular_factory(request) -> Molecule:
 
 @app.route("/")
 def homepage():
-    return "Welcome to the chemical structure server, use our tools! This page under construction"
+    return render_template("homepage.html")
 
 # simple test run
 # input: NADA
