@@ -73,6 +73,7 @@ def inchikey():
 @app.route("/classyfire")
 @rdkit_handle_error
 def classyfire():
+    #TODO: use new code in this area
     inchikey = ""
     if "smiles" in request.values:
         inchikey = str(Chem.MolToInchiKey(Chem.MolFromSmiles(request.values["smiles"])))
@@ -137,6 +138,7 @@ def structuremass():
 @app.route("/formula")
 @rdkit_handle_error
 def formula():
+    #TODO: refactor this
     if "smiles" in request.values:
         m = Chem.MolFromSmiles(request.values["smiles"])
     elif "inchi" in request.values:
@@ -179,7 +181,6 @@ def structureimg():
 @app.route("/structuresimilarity")
 @rdkit_handle_error
 def structuresimilarity():
-    #TODO: refactor
     smiles1 = request.values.get("smiles1", None)
     inchi1 = request.values.get("inchi1", None)
 

@@ -23,15 +23,13 @@ def test_molecule_parse():
 
         if inchikey == "0":
             inchikey = None
-        
-       
+
         m = Molecule.Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey)
         assessment = ""
         if m:
             assessment = "1"
         else:
             assessment = "0"
-        print(test_case, assessment)
         assert(str(expected_success) == assessment)
 
 def test_formula():

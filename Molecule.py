@@ -31,16 +31,16 @@ class Molecule(object):
         self._exact_mass = None
         self._formula = None
 
-        # initial RDKit mol based on input
-        # TODO: Perform fancy try catch statements here to see which one works
+        # initial RDKit mol based on input, attempts retries if we can't parse
         if smiles:
             self._smiles = smiles
             self.mol = Chem.MolFromSmiles(smiles)
-            print(self.mol)
-        elif inchi:
+
+        if inchi and self.mol is None:
             self._inchi = inchi
             self.mol = Chem.MolFromInchi(inchi)
-        elif inchikey:
+
+        if inchikey and self.mol is None:
             # self._inchikey = inchikey
             self.mol = Chem.MolFromSmiles(cactus_inchikey_lookup(inchikey))
 
