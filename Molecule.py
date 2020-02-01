@@ -125,8 +125,24 @@ class Molecule(object):
         if not os.path.exists(os.path.dirname(path)):
             raise OSError("Base directory does not exist")
 
-        #TODO: bring in information to save out to svg and png
-        MolToFile(self.mol, path, size=(width,height), subImgSize=(width, height), fitImage=True, legends=None, imageType=img_type)
+
+        
+
+        if img_type == "png":
+            intermediate_height = 250
+            intermediate_width = float(width)/float(height) * 250
+            
+            MolToFile(self.mol, path, size=(intermediate_width,intermediate_height), 
+            subImgSize=(intermediate_width, intermediate_height), 
+            fitImage=True, legends=None, imageType="svg")
+
+            import cairosvg
+            cairosvg.svg2png(url=path, write_to=path, output_width=width, output_height=height)
+        elif img_type == "svg":
+            MolToFile(self.mol, path, size=(width,height), 
+            subImgSize=(width, height), 
+            fitImage=True, legends=None, imageType="svg")
+
 
     def export_structure(self) -> dict:
         """return structure descriptors"""
