@@ -3,7 +3,7 @@ server-compose-build:
 
 server-compose-interactive:
 	docker-compose build
-	docker-compose up
+	docker-compose --log-level DEBUG up
 
 server-compose-server:
 	docker-compose build

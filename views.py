@@ -23,14 +23,10 @@ from Molecule import Molecule
 def molecular_factory(request) -> Molecule:
     #TODO: Try to figure out the smiles and inchi parameter names then pass it along
     """Given a flask request, create a molecule"""
-    if "smiles" in request.values:
-        m = Molecule(smiles=request.values["smiles"])
-    elif "inchi" in request.values:
-        m = Molecule(inchi=request.values["inchi"])
-    elif "inchikey" in request.values:
-        m = Molecule(inchikey=request.values["inchikey"])
-    else:
-        m = Molecule()
+    smiles = request.values.get("smiles", None)
+    inchi = request.values.get("inchi", None)
+    inchikey = request.values.get("inchikey", None)
+    m = Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey)
     return m
 
 @app.route("/")
