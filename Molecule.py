@@ -36,6 +36,7 @@ class Molecule(object):
         if smiles:
             self._smiles = smiles
             self.mol = Chem.MolFromSmiles(smiles)
+            print(self.mol)
         elif inchi:
             self._inchi = inchi
             self.mol = Chem.MolFromInchi(inchi)
@@ -124,9 +125,6 @@ class Molecule(object):
             raise TypeError(f"imageType must be in {IMAGE_TYPES}")
         if not os.path.exists(os.path.dirname(path)):
             raise OSError("Base directory does not exist")
-
-
-        
 
         if img_type == "png":
             intermediate_height = 250

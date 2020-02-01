@@ -57,3 +57,13 @@ Structure Similarity
 ``` cd test
 nose2 -v
 ```
+
+## Integration Testing
+
+For local testing go to integration testing folder
+
+make local
+
+for production
+
+make production
