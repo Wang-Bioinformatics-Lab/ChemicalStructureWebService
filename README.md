@@ -62,8 +62,8 @@ nose2 -v
 
 For local testing go to integration testing folder
 
-sh ./run_local.sh
+```sh ./test_local.sh```
 
 for production
 
-nose2 -v
+```nose2 -v```
