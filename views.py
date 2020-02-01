@@ -32,6 +32,11 @@ def molecular_factory(request) -> Molecule:
 def homepage():
     return render_template("homepage.html")
 
+@app.route("/contributors")
+def contributors():
+    return render_template("contributors.html")
+
+
 # simple test run
 # input: NADA
 # output: NADA
