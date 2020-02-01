@@ -21,7 +21,6 @@ from Molecule import Molecule
 
 # This is the molecule factory that will take in a request and try to figure out what molecule it is
 def molecular_factory(request) -> Molecule:
-    #TODO: Try to figure out the smiles and inchi parameter names then pass it along
     """Given a flask request, create a molecule"""
     smiles = request.values.get("smiles", None)
     inchi = request.values.get("inchi", None)
@@ -69,17 +68,12 @@ def inchikey():
 @app.route("/classyfire")
 @rdkit_handle_error
 def classyfire():
-    #TODO: use new code in this area
-    inchikey = ""
-    if "smiles" in request.values:
-        inchikey = str(Chem.MolToInchiKey(Chem.MolFromSmiles(request.values["smiles"])))
-    elif "inchi" in request.values:
-        inchikey = str(Chem.InchiToInchiKey(request.values["inchi"]))
+    m = molecular_factory(request)
+    if m:
+        r = requests.get("https://gnps-classyfire.ucsd.edu/entities/{}.json".format(m.inchikey))
+        return r.text, r.status_code
     else:
-        return {"message":"please input inchi or smiles"}, 400
-    
-    r = requests.get("https://gnps-classyfire.ucsd.edu/entities/{}.json".format(inchikey))
-    return r.text, r.status_code
+        return {"message":"unable to import structure"}, 400
 
 # get inchi using smiles
 # input: smiles
@@ -134,16 +128,11 @@ def structuremass():
 @app.route("/formula")
 @rdkit_handle_error
 def formula():
-    #TODO: refactor this
-    if "smiles" in request.values:
-        m = Chem.MolFromSmiles(request.values["smiles"])
-    elif "inchi" in request.values:
-        m = Chem.MolFromInchi(request.values["inchi"])
+    m = molecular_factory(request)
+    if m:
+        return str(m.formula)
     else:
-        return {"message":"please input inchi or smiles"}, 400
-    if not m:
-        return {"message":"structure cant be identified"}, 400
-    return str(CalcMolFormula(m))
+        return {"message":"unable to import structure"}, 400
 
 
 # draw the image of structure

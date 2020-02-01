@@ -32,3 +32,36 @@ def test_cases():
         print(test_case, assessment)
         assert(str(expected_success) == assessment)
 
+def test_image():
+    smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+    url = f"{SERVER_URL}/structureimg"
+    r = requests.get(url, params={"smiles" : smiles})
+    r.raise_for_status()
+
+def test_classyfire():
+    smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+    url = f"{SERVER_URL}/classyfire"
+    r = requests.get(url, params={"smiles" : smiles})
+    r.raise_for_status()
+
+def test_convert():
+    smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+    url = f"{SERVER_URL}/convert"
+    r = requests.get(url, params={"smiles" : smiles})
+    r.raise_for_status()
+    
+def test_formula():
+    smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+    url = f"{SERVER_URL}/formula"
+    r = requests.get(url, params={"smiles" : smiles})
+    r.raise_for_status()
+
+    assert(r.text == "C8H10N4O2")
+
+def test_input_key():
+    inchikey = "RYYVLZVUVIJVGH-UHFFFAOYSA-N"
+    url = f"{SERVER_URL}/formula"
+    r = requests.get(url, params={"inchikey" : inchikey})
+    r.raise_for_status()
+
+    assert(r.text == "C8H10N4O2")
