@@ -17,11 +17,25 @@ from rdkit.Chem.Fingerprints.FingerprintMols import FingerprintMol
 from rdkit.Chem.rdMolDescriptors import CalcMolFormula
 
 from decorators import rdkit_handle_error
+from Molecule import Molecule
 
+# This is the molecule factory that will take in a request and try to figure out what molecule it is
+def molecular_factory(request) -> Molecule:
+    """Given a flask request, create a molecule"""
+    smiles = request.values.get("smiles", None)
+    inchi = request.values.get("inchi", None)
+    inchikey = request.values.get("inchikey", None)
+    m = Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey)
+    return m
 
 @app.route("/")
 def homepage():
-    return "Welcome to the chemical structure server, use our tools! This page under construction"
+    return render_template("homepage.html")
+
+@app.route("/contributors")
+def contributors():
+    return render_template("contributors.html")
+
 
 # simple test run
 # input: NADA
@@ -30,20 +44,28 @@ def homepage():
 def heartbeat():
     return "{}"
 
-# get inchikey using either smiles or inchi
-# input: smiles / inchi
+# Unified output in JSON format
+# input: smiles, inchi, or inchikey
+# output: json
+@app.route("/convert")
+@rdkit_handle_error
+def convert():
+    m = molecular_factory(request)
+    if not m:
+        return {"message":"unable to import structure"}, 400
+    return jsonify(m.export_structure())
+
+# get inchikey
+# input: smiles, inchi, or inchikey
 # output: inchikey
 @app.route("/inchikey")
 @rdkit_handle_error
 def inchikey():
-    inchikey = ""
-    if "smiles" in request.values:
-        inchikey = str(Chem.MolToInchiKey(Chem.MolFromSmiles(request.values["smiles"])))
-    elif "inchi" in request.values:
-        inchikey = str(Chem.InchiToInchiKey(request.values["inchi"]))
+    m = molecular_factory(request)
+    if m:
+        return str(m.inchikey)
     else:
-        return {"message":"please input inchi or smiles"}, 400
-    return inchikey
+        return {"message":"unable to import structure"}, 400
 
 # get classyfire using either smiles or inchi
 # input: smiles / inchi
@@ -51,16 +73,12 @@ def inchikey():
 @app.route("/classyfire")
 @rdkit_handle_error
 def classyfire():
-    inchikey = ""
-    if "smiles" in request.values:
-        inchikey = str(Chem.MolToInchiKey(Chem.MolFromSmiles(request.values["smiles"])))
-    elif "inchi" in request.values:
-        inchikey = str(Chem.InchiToInchiKey(request.values["inchi"]))
+    m = molecular_factory(request)
+    if m:
+        r = requests.get("https://gnps-classyfire.ucsd.edu/entities/{}.json".format(m.inchikey))
+        return r.text, r.status_code
     else:
-        return {"message":"please input inchi or smiles"}, 400
-    
-    r = requests.get("https://gnps-classyfire.ucsd.edu/entities/{}.json".format(inchikey))
-    return r.text, r.status_code
+        return {"message":"unable to import structure"}, 400
 
 # get inchi using smiles
 # input: smiles
@@ -68,200 +86,115 @@ def classyfire():
 @app.route("/inchi")
 @rdkit_handle_error
 def inchi():
-    if "smiles" in request.values:
-        return str(Chem.MolToInchi(Chem.MolFromSmiles(request.values["smiles"])))
-    elif "inchikey" in request.values:
-        return str(Chem.MolToInchi(Chem.MolFromSmiles(cactus_inchikey_lookup(request.values["smiles"]))))
+    m = molecular_factory(request)
+    if m:
+        return str(m.inchi)
     else:
-        return {"message":"please input smiles"}, 400
-    
+        return {"message":"unable to import structure"}, 400
 
-# get smiles using inchi
-# input: inchi
+# get smiles
+# input: smiles, inchi, or inchikey
 # output: smiles
 @app.route("/smiles")
 @rdkit_handle_error
 def smiles():
-    if "inchi" not in request.values:
-        return {"message":"please input inchi"}, 400
-    mol = Chem.MolFromInchi(request.values["inchi"])
-    if not mol:
-        return {"message":"structure cant be identified"}, 400
-    return str(Chem.MolToSmiles(mol))
+    m = molecular_factory(request)
+    if m:
+        return str(m.smiles)
+    else:
+        return {"message":"unable to import structure"}, 400
 
-
-# input: inchi / smiles
-# output: mol
+# get molblock
+# input: smiles, inchi, or inchikey
+# output: molblock
 @app.route("/mol")
 @rdkit_handle_error
 def mol():
-    if "smiles" in request.values:
-        m = Chem.MolFromSmiles(request.values["smiles"])
-    elif "inchi" in request.values:
-        m = Chem.MolFromInchi(request.values["inchi"])
+    m = molecular_factory(request)
+    if m:
+        return str(m.molblock)
     else:
-        return {"message":"please input inchi or smiles"}, 400
-    if not m:
-        return {"message":"structure cant be identified"}, 400
-    return Chem.MolToMolBlock(m)
+        return {"message":"unable to import structure"}, 400
 
-# input: inchi / smiles
-# output : mass (float)
+# get exact mass
+# input: smiles, inchi, or inchikey
+# output : mass (float) as string
 @app.route("/structuremass")
 @rdkit_handle_error
 def structuremass():
-    if "smiles" in request.values:
-        m = Chem.MolFromSmiles(request.values["smiles"])
-    elif "inchi" in request.values:
-        m = Chem.MolFromInchi(request.values["inchi"])
+    m = molecular_factory(request)
+    if m:
+        return str(m.exact_mass)
     else:
-        return {"message":"please input inchi or smiles"}, 400
-    if not m:
-        return {"message":"structure cant be identified"}, 400
-    return str(ExactMolWt(m))
+        return {"message":"unable to import structure"}, 400
 
 # input: inchi / smiles
 # output : formula 
 @app.route("/formula")
 @rdkit_handle_error
 def formula():
-    if "smiles" in request.values:
-        m = Chem.MolFromSmiles(request.values["smiles"])
-    elif "inchi" in request.values:
-        m = Chem.MolFromInchi(request.values["inchi"])
+    m = molecular_factory(request)
+    if m:
+        return str(m.formula)
     else:
-        return {"message":"please input inchi or smiles"}, 400
-    if not m:
-        return {"message":"structure cant be identified"}, 400
-    return str(CalcMolFormula(m))
+        return {"message":"unable to import structure"}, 400
 
 
 # draw the image of structure
-# rdkit
-# input: smiles or inchi, width, height
+# input: smiles, inchi, or inchikey, width, height, imgType
 @app.route("/structureimg")
 @rdkit_handle_error
 def structureimg():
-    if "smiles" in request.values:
-        m = Chem.MolFromSmiles(request.values["smiles"])
-    elif "inchi" in request.values:
-        m = Chem.MolFromInchi(request.values["inchi"])
-    else:
-        return {"message":"please input inchi or smiles"}, 400
-    if not m:
-        return {"message":"structure cant be identified"}, 400
     #Parsing out size
-    width = 350
-    height = 250
-    if "width" in request.values:
-        try:
-            if float(request.args.get('width')) > 0:
-                width = float(request.args.get('width'))
-        except:
-            pass
-    if "height" in request.values:
-        try:
-            if float(request.args.get('height')) > 0:
-                height = float(request.args.get('height'))
-        except:
-            pass
-    print (width,height)
+    width = int(request.args.get('width') or 350)
+    height = int(request.args.get('width') or 350)
     uuid_key = str(uuid.uuid4())
-    output_svg = os.path.join("structure_images", uuid_key + ".svg")
+    imgType = request.values.get("imgType", "png")
 
-    #TODO: The following is a hack to render at a small resolution and then scale up when we raster, it makes everything look a lot nicer
-    #We should obey the aspect ratio when rendering at low resolution, but thats something we gotta do
+    m = molecular_factory(request)
+    if not m:
+        return {"message":"unable to import structure"}, 400
 
-    # structure_images = MolToFile(m, output_svg, size=(int(width), int(height)),\
-    #                               subImgSize=(int(width), int(height)), \
-    #                               fitImage=True, legends=None, imageType="svg")
-    
-    structure_images = MolToFile(m, output_svg, size=(350, 250),\
-                                  subImgSize=(350, 250), \
-                                  fitImage=True, legends=None, imageType="svg")
-
-    #return send_file(output_svg, mimetype='image/svg+xml')
-
-    #Cairo Conversion
-    import cairosvg
-    output_png = os.path.join("structure_images", uuid_key + ".png")
-    cairosvg.svg2png(url=output_svg, write_to=output_png, output_width=width, output_height=int(250/350 * width))
-
-    return send_file(output_png, mimetype='image/png')
-    
-    #Inkscape Conversion
-    # output_png = os.path.join("structure_images", uuid_key + ".png")
-    # cmd = "inkscape -z -e {} -w {} -h {} {}".format(output_png, width, int(250/350 * width), output_svg)
-    # os.system(cmd)
-
-    return send_file(output_png, mimetype='image/png')
+    if imgType == "png":
+        output_filename = os.path.join("structure_images", uuid_key + ".png")
+        m.save_image(output_filename, height=height, width=width, imageType="png")
+        return send_file(output_filename, mimetype='image/png')
+    elif imgType == "svg":
+        output_filename = os.path.join("structure_images", uuid_key + ".svg")
+        m.save_image(output_filename, height=height, width=width, imageType="svg")
+        return send_file(output_filename, mimetype='image/svg+xml')
+    else:
+        return {"message":"Please select proper file type"}, 400
     
 
 # Calculates the structural similarity
 @app.route("/structuresimilarity")
 @rdkit_handle_error
 def structuresimilarity():
-    if "smiles1" in request.values:
-        mol1 = Chem.MolFromSmiles(request.values["smiles1"])
-    elif "inchi1" in request.values:
-        mol1 = Chem.MolFromInchi(request.values["inchi1"])
-    else:
-        return {"message":"please input inchi or smiles"}, 400
+    smiles1 = request.values.get("smiles1", None)
+    inchi1 = request.values.get("inchi1", None)
+
+    smiles2 = request.values.get("smiles2", None)
+    inchi2 = request.values.get("inchi2", None)
+
+    mol1 = Molecule(smiles=smiles1, inchi=inchi1)
     if not mol1:
         return {"message":"unable to import structure 1."}, 400
 
-    if "smiles2" in request.values:
-        mol2 = Chem.MolFromSmiles(request.values["smiles2"])
-    elif "inchi2" in request.values:
-        mol2 = Chem.MolFromInchi(request.values["inchi2"])
-    else:
-        return {"message":"please input inchi or smiles"}, 400
+    mol2 = Molecule(smiles=smiles2, inchi=inchi2)
     if not mol2:
         return {"message":"unable to import structure 2."},400
 
-    return str(FingerprintSimilarity(FingerprintMol(mol1),FingerprintMol(mol2)))
-
-# ignore below functions
-@app.route("/structuresimilarityjsonp")
-def structuresimilarityjsonp():
-    return "{}"
+    return str(mol1.similarity(mol2))
 
 # from inchi, smiles, get fingerprint
 # circular/Morgan fingerprint with 512 bits
 @app.route("/structurefingerprint")
 @rdkit_handle_error
 def structurefingerprint():
-    if "smiles" in request.values:
-        mol = Chem.MolFromSmiles(request.values["smiles"])
-    elif "inchi" in request.values:
-        mol = Chem.MolFromSmiles(request.values["inchi"])
-    if not mol:
-        return {"message":"unable to import structure."},400
-    return AllChem.GetMorganFingerprintAsBitVect(mol, radius=2, nBits=512).ToBitString()
+    m = molecular_factory(request)
+    if m:
+        return str(m.fingerprint)
+    else:
+        return {"message":"unable to import structure"}, 400
 
-# get inchi using smiles
-# input: inchikey
-# output: smiles
-@app.route("/inchikeyresolver")
-@rdkit_handle_error
-def inchikeyresolver():
-    inchikey = request.values["inchikey"]
-    smiles = cactus_inchikey_lookup(inchikey)
-
-    if smiles is None:
-        return "", 404
-
-    return smiles
-
-def cactus_inchikey_lookup(inchikey):
-    url = "https://cactus.nci.nih.gov/chemical/structure/{0}/smiles".format(inchikey)
-    r = requests.get(url)
-    if r.ok:
-        smiles = r.text.split()
-        if smiles:
-            return smiles[0]
-    return None
-
-if __name__ == "__main__":
-    app.debug = False
-    app.run(host='0.0.0.0')

@@ -1,0 +1,7 @@
+smiles	inchi	inchikey	success
+	InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3		1
+CCO			1
+CCO**			1
+CcccC12c1			0
+	InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3		1
+AA	InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3		1
