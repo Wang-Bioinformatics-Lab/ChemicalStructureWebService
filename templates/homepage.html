@@ -21,8 +21,11 @@
                     <label for="smiles">SMILES</label>
                 </div>
                 <div class="col-sm-7">
-                    <div class="text-center">
+                    <div class="text-center input-group">
                         <input type="text" class="form-control" name="smiles" id="smiles" placeholder="Enter SMILES">
+                        <button class="btn" data-clipboard-target="#smiles">
+                          <i class="fas fa-clipboard"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="col-sm-4">
@@ -38,11 +41,18 @@
                     <label for="inchi">InChI</label>
                 </div>
                 <div class="col-sm-7">
-                    <div class="text-center">
+                    <div class="text-center input-group">
                         <input type="text" class="form-control" name="inchi" id="inchi" placeholder="Enter InChI">
+                        <button class="btn" data-clipboard-target="#inchi">
+                          <i class="fas fa-clipboard"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="col-sm-4">
+                    <div class="text-center">
+                        <button id="analyzebutton" class="btn btn-primary btn-sm btn-block"
+                            onclick="clearInput()">Clear</button>
+                    </div>
                 </div>
             </div>
             <br>
@@ -51,9 +61,12 @@
                     <label for="inchikey">InChIKey</label>
                 </div>
                 <div class="col-sm-7">
-                    <div class="text-center">
+                    <div class="text-center input-group">
                         <input type="text" class="form-control" name="inchikey" id="inchikey"
                             placeholder="Enter InChIKey">
+                        <button class="btn" data-clipboard-target="#inchikey">
+                          <i class="fas fa-clipboard"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="col-sm-4">
@@ -75,6 +88,8 @@
 
 
 <script>
+    var clipboard = new ClipboardJS('.btn');
+
     function convertStructure() {
         smiles = $("#smiles").val()
         inchi = $("#inchi").val()
@@ -97,6 +112,13 @@
             },
             dataType: "json"
         })
+    }
+
+    function clearInput() {
+      $("#smiles").val("")
+      $("#inchi").val("")
+      $("#inchikey").val("")
+      $("#structureimage")[0].src = ""
     }
 
     // var input = document.getElementById("identifier");
