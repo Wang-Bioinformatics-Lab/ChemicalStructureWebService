@@ -15,7 +15,7 @@ IMAGE_TYPES = ["svg", "png"]
 
 class Molecule(object):
 
-    def __init__(self, smiles:str=None, inchi:str=None, inchikey:str=None) -> None:
+    def __init__(self, smiles:str=None, inchi:str=None, inchikey:str=None, name:str=None) -> None:
         # Baseline attributes
         # Precompute method
         self.mol = None
@@ -43,6 +43,9 @@ class Molecule(object):
         if inchikey and self.mol is None:
             # self._inchikey = inchikey
             self.mol = Chem.MolFromSmiles(cactus_inchikey_lookup(inchikey))
+
+        if name and self.mol is None:
+            self.mol = Chem.MolFromSmiles(cactus_name_lookup(name))
 
         # Get the basic properties
         self.__calc_basic_props()
@@ -162,3 +165,8 @@ def cactus_inchikey_lookup(inchikey: str) -> Union[str, None]:
         if smiles:
             return smiles[0]
     return None
+
+def cactus_name_lookup(name: str) -> Union[str, None]:
+    # Cactus lookup is the same regardless of input
+    # This is just an alias for convenience
+    return cactus_inchikey_lookup(name)

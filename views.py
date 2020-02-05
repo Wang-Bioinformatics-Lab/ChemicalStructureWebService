@@ -25,7 +25,8 @@ def molecular_factory(request) -> Molecule:
     smiles = request.values.get("smiles", None)
     inchi = request.values.get("inchi", None)
     inchikey = request.values.get("inchikey", None)
-    m = Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey)
+    name = request.values.get("name", None)
+    m = Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey, name=name)
     return m
 
 @app.route("/")
