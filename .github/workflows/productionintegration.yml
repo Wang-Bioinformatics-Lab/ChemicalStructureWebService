@@ -2,6 +2,7 @@ name: production-integration
 
 on: 
   push:
+    branches: rdkit_integration
   schedule:
    - cron:  '27 * * * *'
 
