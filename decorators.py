@@ -9,7 +9,7 @@ def rdkit_handle_error(func):
             return func(*args, **kwargs)
         except (TypeError, NameError) as e:
             print("RDKit unable to process mol")
-            # print(e)
+            #print(e, file=sys.stderr, flush=True)
             return {"message": "structure cant be identified"}, 400
     # Have to rename wrapper or else Flask tries to register all uses as "wrapper"
     # causing AssertionError

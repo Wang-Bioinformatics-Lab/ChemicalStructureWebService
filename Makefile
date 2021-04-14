@@ -12,6 +12,9 @@ server-compose-server:
 server-compose-production:
 	docker-compose -f docker-compose.yml -f docker-compose-production.yml up -d
 
+server-compose-production-interactive:
+	docker-compose -f docker-compose.yml -f docker-compose-production.yml up
+
 build:
 	docker build -t chemicalwebservice_rdkit .
 

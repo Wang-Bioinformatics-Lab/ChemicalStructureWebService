@@ -6,6 +6,8 @@ services:
       - default
       - nginx-net
     command: /app/run_server.sh
+    volumes:
+      - ./logs:/app/logs:rw
     environment:
       VIRTUAL_HOST: gnps-structure.ucsd.edu
       VIRTUAL_PORT: 5066
