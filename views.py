@@ -17,16 +17,12 @@ from rdkit.Chem.Fingerprints.FingerprintMols import FingerprintMol
 from rdkit.Chem.rdMolDescriptors import CalcMolFormula
 
 from decorators import rdkit_handle_error
-from Molecule import Molecule
+from Molecule import Molecule, molecular_factory_dict
 
 # This is the molecule factory that will take in a request and try to figure out what molecule it is
 def molecular_factory(request) -> Molecule:
     """Given a flask request, create a molecule"""
-    smiles = request.values.get("smiles", None)
-    inchi = request.values.get("inchi", None)
-    inchikey = request.values.get("inchikey", None)
-    m = Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey)
-    return m
+    return molecular_factory_dict(request.values)
 
 @app.route("/")
 def homepage():
