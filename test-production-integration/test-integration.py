@@ -65,3 +65,12 @@ def test_input_key():
     r.raise_for_status()
 
     assert(r.text == "C8H10N4O2")
+
+def test_adduct():
+    smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+    mz = 195.087
+    url = f"{SERVER_URL}/adductcalc"
+    r = requests.get(url, params={"smiles" : smiles, "mz": mz})
+    r.raise_for_status()
+
+    assert(len(r.json()) > 5)

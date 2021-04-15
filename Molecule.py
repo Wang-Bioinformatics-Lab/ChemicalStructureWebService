@@ -162,3 +162,11 @@ def cactus_inchikey_lookup(inchikey: str) -> Union[str, None]:
         if smiles:
             return smiles[0]
     return None
+
+def molecular_factory_dict(structure_dict) -> Molecule:
+    """Given a dict, create a molecule"""
+    smiles = structure_dict.get("smiles", None)
+    inchi = structure_dict.get("inchi", None)
+    inchikey = structure_dict.get("inchikey", None)
+    m = Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey)
+    return m

@@ -17,16 +17,13 @@ from rdkit.Chem.Fingerprints.FingerprintMols import FingerprintMol
 from rdkit.Chem.rdMolDescriptors import CalcMolFormula
 
 from decorators import rdkit_handle_error
-from Molecule import Molecule
+from Molecule import Molecule, molecular_factory_dict
+from adducts import ADDUCT_SET, get_adduct_mass
 
 # This is the molecule factory that will take in a request and try to figure out what molecule it is
 def molecular_factory(request) -> Molecule:
     """Given a flask request, create a molecule"""
-    smiles = request.values.get("smiles", None)
-    inchi = request.values.get("inchi", None)
-    inchikey = request.values.get("inchikey", None)
-    m = Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey)
-    return m
+    return molecular_factory_dict(request.values)
 
 @app.route("/")
 def homepage():
@@ -139,6 +136,29 @@ def formula():
     else:
         return {"message":"unable to import structure"}, 400
 
+# input: inchi / smiles 
+# output : adduct prediction 
+@app.route("/adductcalc")
+@rdkit_handle_error
+def calculate_adduct():
+    m = molecular_factory(request)
+    if m:
+        exact_mass = m.exact_mass
+        mz = float(request.values.get('mz'))
+
+        all_calculations = []
+        for adduct in ADDUCT_SET:
+            calculated_mz, charge = get_adduct_mass(exact_mass, adduct)
+            result_dict = {}
+            result_dict["adduct"] = adduct
+            result_dict["mz"] = calculated_mz
+            result_dict["charge"] = charge
+            result_dict["delta"] = mz - calculated_mz
+
+            all_calculations.append(result_dict)
+        return json.dumps(all_calculations)
+    else:
+        return {"message":"unable to import structure"}, 400
 
 # draw the image of structure
 # input: smiles, inchi, or inchikey, width, height, imgType
