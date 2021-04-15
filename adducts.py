@@ -1,4 +1,6 @@
 
+ADDUCT_SET = ["M", "M+H", "M+Na", "M+K", "M+NH4", "M-H", "M+Br", "M+Cl"]
+
 def get_adduct_mass(exact_mass, adduct):
     M = exact_mass
 
