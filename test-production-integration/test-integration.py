@@ -23,7 +23,7 @@ def test_cases():
             inchikey = ""
         
         url = f"{SERVER_URL}/structuremass"
-        r = requests.get(url, params={"smiles" : smiles, "inchi" : inchi, "inchikey" : inchikey})
+        r = requests.get(url, params={"smiles" : smiles, "inchi" : inchi, "inchikey" : inchikey}, timeout=10)
         print(r.url, r.status_code, test_case)
         if r.status_code == 200:
             assessment = "1"
@@ -35,25 +35,25 @@ def test_cases():
 def test_image():
     smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
     url = f"{SERVER_URL}/structureimg"
-    r = requests.get(url, params={"smiles" : smiles})
+    r = requests.get(url, params={"smiles" : smiles}, timeout=10)
     r.raise_for_status()
 
 def test_classyfire():
     smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
     url = f"{SERVER_URL}/classyfire"
-    r = requests.get(url, params={"smiles" : smiles})
+    r = requests.get(url, params={"smiles" : smiles}, timeout=10)
     r.raise_for_status()
 
 def test_convert():
     smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
     url = f"{SERVER_URL}/convert"
-    r = requests.get(url, params={"smiles" : smiles})
+    r = requests.get(url, params={"smiles" : smiles}, timeout=10)
     r.raise_for_status()
     
 def test_formula():
     smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
     url = f"{SERVER_URL}/formula"
-    r = requests.get(url, params={"smiles" : smiles})
+    r = requests.get(url, params={"smiles" : smiles}, timeout=10)
     r.raise_for_status()
 
     assert(r.text == "C8H10N4O2")
@@ -61,7 +61,7 @@ def test_formula():
 def test_input_key():
     inchikey = "RYYVLZVUVIJVGH-UHFFFAOYSA-N"
     url = f"{SERVER_URL}/formula"
-    r = requests.get(url, params={"inchikey" : inchikey})
+    r = requests.get(url, params={"inchikey" : inchikey}, timeout=10)
     r.raise_for_status()
 
     assert(r.text == "C8H10N4O2")
@@ -70,7 +70,7 @@ def test_adduct():
     smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
     mz = 195.087
     url = f"{SERVER_URL}/adductcalc"
-    r = requests.get(url, params={"smiles" : smiles, "mz": mz})
+    r = requests.get(url, params={"smiles" : smiles, "mz": mz}, timeout=10)
     r.raise_for_status()
 
     assert(len(r.json()) > 5)
