@@ -52,7 +52,7 @@ DASHBOARD = [
             html.Br(),
             dbc.InputGroup(
                 [
-                    dbc.InputGroupAddon("Molecular Formula", addon_type="prepend"),
+                    dbc.InputGroupText("Molecular Formula"),
                     dbc.Input(placeholder="Enter Formula", id="formula_entry"),
                 ],
                 className="mb-3",
@@ -60,21 +60,21 @@ DASHBOARD = [
             html.Br(),
             dbc.InputGroup(
                 [
-                    dbc.InputGroupAddon("SMILES", addon_type="prepend"),
+                    dbc.InputGroupText("SMILES"),
                     dbc.Input(placeholder="Enter SMILES structure", id="smiles_entry", value=""),
                 ],
                 className="mb-3",
             ),
             dbc.InputGroup(
                 [
-                    dbc.InputGroupAddon("InChI", addon_type="prepend"),
+                    dbc.InputGroupText("InChI"),
                     dbc.Input(placeholder="Enter InChI structure", id="inchi_entry", value=""),
                 ],
                 className="mb-3",
             ),
             dbc.InputGroup(
                 [
-                    dbc.InputGroupAddon("InChIKey", addon_type="prepend"),
+                    dbc.InputGroupText("InChIKey"),
                     dbc.Input(placeholder="Enter InChIKey structure", id="inchikey_entry", value=""),
                 ],
                 className="mb-3",
