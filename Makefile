@@ -1,19 +1,20 @@
 server-compose-build:
-	docker-compose build
+	docker-compose --compatibility build
 
 server-compose-interactive:
-	docker-compose build
-	docker-compose --log-level DEBUG up
+	docker-compose --compatibility build
+	docker-compose --compatibility --log-level DEBUG up
 
 server-compose-server:
-	docker-compose build
-	docker-compose up -d
+	docker-compose --compatibility build
+	docker-compose --compatibility up -d
 
 server-compose-production:
-	docker-compose -f docker-compose.yml -f docker-compose-production.yml up -d
+	docker-compose --compatibility build
+	docker-compose -f docker-compose.yml -f docker-compose-production.yml --compatibility up -d
 
 server-compose-production-interactive:
-	docker-compose -f docker-compose.yml -f docker-compose-production.yml up
+	docker-compose -f docker-compose.yml -f docker-compose-production.yml --compatibility up
 
 build:
 	docker build -t chemicalwebservice_rdkit .
