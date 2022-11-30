@@ -9,10 +9,10 @@ services:
     volumes:
       - ./logs:/app/logs:rw
     environment:
-      VIRTUAL_HOST: gnps-structure.ucsd.edu
-      VIRTUAL_PORT: 5066
-      LETSENCRYPT_HOST: gnps-structure.ucsd.edu
-      LETSENCRYPT_EMAIL: miw023@ucsd.edu
+      VIRTUAL_HOST: structure.gnps2.org
+      VIRTUAL_PORT: 5000
+      LETSENCRYPT_HOST: structure.gnps2.org
+      LETSENCRYPT_EMAIL: mwang87@gmail.com
 
 networks:
   nginx-net:

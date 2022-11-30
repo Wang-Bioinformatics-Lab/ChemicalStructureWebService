@@ -14,6 +14,7 @@ server-compose-production:
 	docker-compose -f docker-compose.yml -f docker-compose-production.yml --compatibility up -d
 
 server-compose-production-interactive:
+	docker-compose --compatibility build
 	docker-compose -f docker-compose.yml -f docker-compose-production.yml --compatibility up
 
 build:
