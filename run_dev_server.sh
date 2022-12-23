@@ -1,3 +1,2 @@
 #!/bin/bash
-source activate rdkit
-python ./main.py
+source activate rdkit && python ./main.py

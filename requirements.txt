@@ -4,10 +4,10 @@ requests
 cairosvg==2.5.2
 molmass
 IsoSpecPy
-dash==1.19.0
-dash-core-components==1.15.0
-dash-html-components==1.1.2
-dash-renderer==1.9.0
-dash-table==4.11.2
-dash_daq==0.5.0
-dash-bootstrap-components==0.12.0
+dash
+dash-core-components
+dash-html-components
+dash-renderer
+dash-table
+dash_daq
+dash-bootstrap-components
