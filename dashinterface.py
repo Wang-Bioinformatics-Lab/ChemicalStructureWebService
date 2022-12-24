@@ -27,6 +27,26 @@ from app import app
 dash_app = dash.Dash(__name__, server=app, external_stylesheets=[dbc.themes.BOOTSTRAP], url_base_pathname='/dashinterface/')
 dash_app.title = 'Calculator'
 
+dash_app.index_string = """<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Analytics Tracking -->
+        <script async defer data-website-id="afcfdea3-c84c-4621-b7f3-c9e001a47d0e" src="https://analytics.gnps2.org/umami.js"></script>
+        {%metas%}
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>"""
+
 NAVBAR = dbc.Navbar(
     children=[
         dbc.NavbarBrand(
