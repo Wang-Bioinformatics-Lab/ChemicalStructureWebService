@@ -15,10 +15,11 @@ IMAGE_TYPES = ["svg", "png"]
 
 class Molecule(object):
 
-    def __init__(self, smiles:str=None, inchi:str=None, inchikey:str=None) -> None:
+    def __init__(self, smiles:str=None, inchi:str=None, inchikey:str=None, mol_str:str=None) -> None:
         # Baseline attributes
         # Precompute method
         self.mol = None
+
         self.smiles = None
         self.inchi = None
         self.inchikey = None
@@ -35,14 +36,17 @@ class Molecule(object):
         if smiles:
             self._smiles = smiles
             self.mol = Chem.MolFromSmiles(smiles)
-
-        if inchi and self.mol is None:
+        elif inchi:
             self._inchi = inchi
             self.mol = Chem.MolFromInchi(inchi)
-
-        if inchikey and self.mol is None:
-            # self._inchikey = inchikey
+        elif inchikey:
             self.mol = Chem.MolFromSmiles(cactus_inchikey_lookup(inchikey))
+        elif mol_str:
+            try:
+                self.mol = Chem.MolFromMolBlock(mol_str)
+            except:
+                self.mol = Chem.MolFromMol2Block(mol_str)
+
 
         # Get the basic properties
         self.__calc_basic_props()
@@ -168,5 +172,6 @@ def molecular_factory_dict(structure_dict) -> Molecule:
     smiles = structure_dict.get("smiles", None)
     inchi = structure_dict.get("inchi", None)
     inchikey = structure_dict.get("inchikey", None)
-    m = Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey)
+    mol_str = structure_dict.get("mol", None)
+    m = Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey, mol_str=mol_str)
     return m
