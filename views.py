@@ -27,7 +27,8 @@ def molecular_factory(request) -> Molecule:
 
 @app.route("/")
 def homepage():
-    return render_template("homepage.html")
+    return redirect('/dashinterface')
+
 
 @app.route("/contributors")
 def contributors():
@@ -44,7 +45,7 @@ def heartbeat():
 # Unified output in JSON format
 # input: smiles, inchi, or inchikey
 # output: json
-@app.route("/convert")
+@app.route("/convert", methods=['GET', 'POST'])
 @rdkit_handle_error
 def convert():
     m = molecular_factory(request)
@@ -55,7 +56,7 @@ def convert():
 # get inchikey
 # input: smiles, inchi, or inchikey
 # output: inchikey
-@app.route("/inchikey")
+@app.route("/inchikey", methods=['GET', 'POST'])
 @rdkit_handle_error
 def inchikey():
     m = molecular_factory(request)
@@ -67,7 +68,7 @@ def inchikey():
 # get classyfire using either smiles or inchi
 # input: smiles / inchi
 # output: classyfire
-@app.route("/classyfire")
+@app.route("/classyfire", methods=['GET', 'POST'])
 @rdkit_handle_error
 def classyfire():
     m = molecular_factory(request)
@@ -80,7 +81,7 @@ def classyfire():
 # get inchi using smiles
 # input: smiles
 # output: inchi
-@app.route("/inchi")
+@app.route("/inchi", methods=['GET', 'POST'])
 @rdkit_handle_error
 def inchi():
     m = molecular_factory(request)
@@ -92,7 +93,7 @@ def inchi():
 # get smiles
 # input: smiles, inchi, or inchikey
 # output: smiles
-@app.route("/smiles")
+@app.route("/smiles", methods=['GET', 'POST'])
 @rdkit_handle_error
 def smiles():
     m = molecular_factory(request)
@@ -104,7 +105,7 @@ def smiles():
 # get molblock
 # input: smiles, inchi, or inchikey
 # output: molblock
-@app.route("/mol")
+@app.route("/mol", methods=['GET', 'POST'])
 @rdkit_handle_error
 def mol():
     m = molecular_factory(request)
@@ -116,7 +117,7 @@ def mol():
 # get exact mass
 # input: smiles, inchi, or inchikey
 # output : mass (float) as string
-@app.route("/structuremass")
+@app.route("/structuremass", methods=['GET', 'POST'])
 @rdkit_handle_error
 def structuremass():
     m = molecular_factory(request)
@@ -127,7 +128,7 @@ def structuremass():
 
 # input: inchi / smiles
 # output : formula 
-@app.route("/formula")
+@app.route("/formula", methods=['GET', 'POST'])
 @rdkit_handle_error
 def formula():
     m = molecular_factory(request)
@@ -138,7 +139,7 @@ def formula():
 
 # input: inchi / smiles 
 # output : adduct prediction 
-@app.route("/adductcalc")
+@app.route("/adductcalc", methods=['GET', 'POST'])
 @rdkit_handle_error
 def calculate_adduct():
     m = molecular_factory(request)
@@ -162,7 +163,7 @@ def calculate_adduct():
 
 # draw the image of structure
 # input: smiles, inchi, or inchikey, width, height, imgType
-@app.route("/structureimg")
+@app.route("/structureimg", methods=['GET', 'POST'])
 @rdkit_handle_error
 def structureimg():
     #Parsing out size
@@ -188,7 +189,7 @@ def structureimg():
     
 
 # Calculates the structural similarity
-@app.route("/structuresimilarity")
+@app.route("/structuresimilarity", methods=['GET', 'POST'])
 @rdkit_handle_error
 def structuresimilarity():
     smiles1 = request.values.get("smiles1", None)
@@ -209,7 +210,7 @@ def structuresimilarity():
 
 # from inchi, smiles, get fingerprint
 # circular/Morgan fingerprint with 512 bits
-@app.route("/structurefingerprint")
+@app.route("/structurefingerprint", methods=['GET', 'POST'])
 @rdkit_handle_error
 def structurefingerprint():
     m = molecular_factory(request)
