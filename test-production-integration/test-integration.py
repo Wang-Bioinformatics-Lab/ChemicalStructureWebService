@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import requests
-SERVER_URL = os.environ.get("SERVER_URL", "https://gnps-structure.ucsd.edu")
+SERVER_URL = os.environ.get("SERVER_URL", "https://structure.gnps2.org")
 
 def test_cases():
     test_cases_df = pd.read_csv("test_cases.csv", sep="\t")
