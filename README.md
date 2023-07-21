@@ -9,7 +9,7 @@ Web Server for Chemical Structure pictures as well as other chemical structure t
 
 Full resolution of all structural information conversion
 
-```https://gnps-structure.ucsd.edu/convert?smiles=CCO```
+```https://structure.gnps2.org/convert?smiles=CCO```
 
 InChI Conversion
 
