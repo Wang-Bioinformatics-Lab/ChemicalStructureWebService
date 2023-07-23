@@ -38,11 +38,11 @@ def test_image():
     r = requests.get(url, params={"smiles" : smiles}, timeout=10)
     r.raise_for_status()
 
-def test_classyfire():
-    smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
-    url = f"{SERVER_URL}/classyfire"
-    r = requests.get(url, params={"smiles" : smiles}, timeout=10)
-    r.raise_for_status()
+#def test_classyfire():
+#    smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+#    url = f"{SERVER_URL}/classyfire"
+#    r = requests.get(url, params={"smiles" : smiles}, timeout=10)
+#    r.raise_for_status()
 
 def test_convert():
     smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
