@@ -1,7 +1,7 @@
 flask
 gunicorn
 requests
-cairosvg==2.5.2
+cairosvg==2.7.0
 molmass
 IsoSpecPy
 dash
