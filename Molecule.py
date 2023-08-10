@@ -11,11 +11,13 @@ from rdkit.Chem.Draw import MolToFile
 from rdkit.DataStructs import FingerprintSimilarity
 from rdkit.Chem.Fingerprints.FingerprintMols import FingerprintMol
 
+from molmass import Formula
+
 IMAGE_TYPES = ["svg", "png"]
 
 class Molecule(object):
 
-    def __init__(self, smiles:str=None, inchi:str=None, inchikey:str=None, mol_str:str=None) -> None:
+    def __init__(self, smiles:str=None, inchi:str=None, inchikey:str=None, mol_str:str=None, formula:str=None) -> None:
         # Baseline attributes
         # Precompute method
         self.mol = None
@@ -36,6 +38,7 @@ class Molecule(object):
         if smiles:
             self._smiles = smiles
             self.mol = Chem.MolFromSmiles(smiles)
+            if self.mol is None: return
         elif inchi:
             self._inchi = inchi
             self.mol = Chem.MolFromInchi(inchi)
@@ -46,6 +49,8 @@ class Molecule(object):
                 self.mol = Chem.MolFromMolBlock(mol_str)
             except:
                 self.mol = Chem.MolFromMol2Block(mol_str)
+        elif formula:
+            self._formula = Formula(formula).formula
 
 
         # Get the basic properties
@@ -90,7 +95,8 @@ class Molecule(object):
 
     def __bool__(self) -> bool:
         """Evaluate truthiness of object"""
-        return bool(self.mol)
+        # If there is only formula, we still want to allow for a response in some cases
+        return bool(self.mol) or bool(self._formula)
 
     @property
     def formula(self) -> str:
@@ -107,7 +113,11 @@ class Molecule(object):
     @property
     def exact_mass(self) -> float:
         if not self._exact_mass:
-            self._exact_mass = ExactMolWt(self.mol)
+            if self.mol:
+                self._exact_mass = ExactMolWt(self.mol)
+            elif self._formula:
+                f = Formula(self._formula)
+                self._exact_mass = f.isotope.mass
         return self._exact_mass
     
     @property
@@ -148,12 +158,15 @@ class Molecule(object):
 
     def export_structure(self) -> dict:
         """return structure descriptors"""
-        return {
-            'smiles': self.smiles,
-            'inchi': self.inchi,
-            'inchikey': self.inchikey,
-            'molblock': self.molblock
-        }
+        try:
+            return {
+                'smiles': self.smiles,
+                'inchi': self.inchi,
+                'inchikey': self.inchikey,
+                'molblock': self.molblock
+            }
+        except Exception as e:
+            pass
         
 
 #### HELPERS ####
@@ -173,5 +186,6 @@ def molecular_factory_dict(structure_dict) -> Molecule:
     inchi = structure_dict.get("inchi", None)
     inchikey = structure_dict.get("inchikey", None)
     mol_str = structure_dict.get("mol", None)
-    m = Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey, mol_str=mol_str)
+    formula = structure_dict.get("formula", None)
+    m = Molecule(smiles=smiles, inchi=inchi, inchikey=inchikey, mol_str=mol_str, formula=formula)
     return m

@@ -49,7 +49,7 @@ def heartbeat():
 @rdkit_handle_error
 def convert():
     m = molecular_factory(request)
-    if not m:
+    if not m.mol:
         return {"message":"unable to import structure"}, 400
     return jsonify(m.export_structure())
 
@@ -60,7 +60,7 @@ def convert():
 @rdkit_handle_error
 def inchikey():
     m = molecular_factory(request)
-    if m:
+    if m.mol:
         return str(m.inchikey)
     else:
         return {"message":"unable to import structure"}, 400
@@ -72,7 +72,7 @@ def inchikey():
 @rdkit_handle_error
 def classyfire():
     m = molecular_factory(request)
-    if m:
+    if m.mol:
         r = requests.get("https://gnps-classyfire.ucsd.edu/entities/{}.json".format(m.inchikey))
         return r.text, r.status_code
     else:
@@ -85,7 +85,7 @@ def classyfire():
 @rdkit_handle_error
 def inchi():
     m = molecular_factory(request)
-    if m:
+    if m.mol:
         return str(m.inchi)
     else:
         return {"message":"unable to import structure"}, 400
@@ -109,7 +109,7 @@ def smiles():
 @rdkit_handle_error
 def mol():
     m = molecular_factory(request)
-    if m:
+    if m.mol:
         return str(m.molblock)
     else:
         return {"message":"unable to import structure"}, 400
@@ -173,7 +173,7 @@ def structureimg():
     imgType = request.values.get("imgType", "png")
 
     m = molecular_factory(request)
-    if not m:
+    if not m.mol:
         return {"message":"unable to import structure"}, 400
 
     if imgType == "png":
@@ -199,11 +199,11 @@ def structuresimilarity():
     inchi2 = request.values.get("inchi2", None)
 
     mol1 = Molecule(smiles=smiles1, inchi=inchi1)
-    if not mol1:
+    if not mol1.mol:
         return {"message":"unable to import structure 1."}, 400
 
     mol2 = Molecule(smiles=smiles2, inchi=inchi2)
-    if not mol2:
+    if not mol2.mol:
         return {"message":"unable to import structure 2."},400
 
     return str(mol1.similarity(mol2))
@@ -214,7 +214,7 @@ def structuresimilarity():
 @rdkit_handle_error
 def structurefingerprint():
     m = molecular_factory(request)
-    if m:
+    if m.mol:
         return str(m.fingerprint)
     else:
         return {"message":"unable to import structure"}, 400
