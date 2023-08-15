@@ -72,8 +72,8 @@ def inchikey():
 @rdkit_handle_error
 def classyfire():
     m = molecular_factory(request)
-    if m.mol:
-        r = requests.get("https://gnps-classyfire.ucsd.edu/entities/{}.json".format(m.inchikey))
+    if m:
+        r = requests.get("https://classyfire.gnps2.org/entities/{}.json".format(m.inchikey))
         return r.text, r.status_code
     else:
         return {"message":"unable to import structure"}, 400
