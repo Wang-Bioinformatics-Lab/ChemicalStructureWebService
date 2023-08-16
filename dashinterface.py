@@ -50,12 +50,12 @@ dash_app.index_string = """<!DOCTYPE html>
 NAVBAR = dbc.Navbar(
     children=[
         dbc.NavbarBrand(
-            html.Img(src="https://gnps-cytoscape.ucsd.edu/static/img/GNPS_logo.png", width="120px"),
-            href="https://gnps.ucsd.edu"
+            html.Img(src="https://gnps2.org/static/img/logo.png", width="120px"),
+            href="https://gnps2.org"
         ),
         dbc.Nav(
             [
-                dbc.NavItem(dbc.NavLink("GNPS Mass Spec Calculator", href="#")),
+                dbc.NavItem(dbc.NavLink("GNPS2 Mass Spec Calculator", href="#")),
             ],
         navbar=True)
     ],
