@@ -74,3 +74,72 @@ def test_adduct():
     r.raise_for_status()
 
     assert(len(r.json()) > 5)
+
+### Tests Relating to Formula Only API Requests ###
+def test_formula_convert():
+    formula = "C8H10N4O2"
+    url = f"{SERVER_URL}/convert"
+    r = requests.get(url, params={"formula" : formula}, timeout=10)
+    
+    assert(r.status_code == 400)
+    assert(r.text.strip() == '{"message":"unable to import structure"}')
+    
+def test_formula_structuremass():
+    formula = "C8H10N4O2"
+    url = f"{SERVER_URL}/structuremass"
+    r = requests.get(url, params={"formula" : formula}, timeout=10)
+    r.raise_for_status()
+    
+    assert(float(r.text) >= 194.08 and float(r.text) <= 194.09)
+    
+def test_formula_formula():
+    formula = "C8H10N4O2"
+    url = f"{SERVER_URL}/formula"
+    r = requests.get(url, params={"formula" : formula}, timeout=10)
+    r.raise_for_status()
+    
+    assert(r.text.strip() == "C8H10N4O2")
+
+def test_formula_adductcalc():
+    pass
+    
+def test_errors_remain_handled():
+    # A basic test that verifies if we put in bad strucutres, an error is still thrown
+    
+    # formula
+    url = f"{SERVER_URL}/formula"
+    
+    formula = 'qwertyu'
+    r = requests.get(url, params={"formula" : formula}, timeout=10)
+    assert(r.status_code == 400)
+    assert(r.text.strip() == '{"message":"formula cant be identified"}')
+    
+    smiles = 'qwertyu'
+    r = requests.get(url, params={"smiles" : smiles}, timeout=10)
+    assert(r.status_code == 400)
+    assert(r.text.strip() == '{"message":"unable to import structure"}')
+    
+    # adductcalc
+    url = f"{SERVER_URL}/adductcalc"
+    formula = 'qwertyu'
+    r = requests.get(url, params={"formula" : formula}, timeout=10)
+    assert(r.status_code == 400)
+    assert(r.text.strip() == '{"message":"formula cant be identified"}')
+    
+    smiles = 'qwertyu'
+    r = requests.get(url, params={"smiles" : smiles}, timeout=10)
+    assert(r.status_code == 400)
+    assert(r.text.strip() == '{"message":"unable to import structure"}')
+    
+    # structuremass
+    url = f"{SERVER_URL}/structuremass"
+    formula = 'qwertyu'
+    r = requests.get(url, params={"formula" : formula}, timeout=10)
+    assert(r.status_code == 400)
+    assert(r.text.strip() == '{"message":"formula cant be identified"}')
+    
+    smiles = 'qwertyu'
+    r = requests.get(url, params={"smiles" : smiles}, timeout=10)
+    assert(r.status_code == 400)
+    assert(r.text.strip() == '{"message":"unable to import structure"}')
+    
