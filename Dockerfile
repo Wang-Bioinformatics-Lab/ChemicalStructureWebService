@@ -1,4 +1,4 @@
-FROM condaforge/mambaforge
+FROM condaforge/mambaforge:23.1.0-4
 
 LABEL maintainer="Mingxun Wang mwang87@gmail.com"
 
