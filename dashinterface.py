@@ -180,7 +180,8 @@ def generate_structure_information(smiles_entry, inchi_entry, inchikey_entry):
     result_list.append({"structure" : "InChI", "value" : m.inchi})
     result_list.append({"structure" : "SMILES", "value" : m.smiles})
     result_list.append({"structure" : "InChIKey", "value" : m.inchikey})
-
+    result_list.append({"structure" : "formula", "value" : m.formula})
+    
     structure_df = pd.DataFrame(result_list)
 
     table = dbc.Table.from_dataframe(structure_df, striped=True, bordered=True, hover=True)
