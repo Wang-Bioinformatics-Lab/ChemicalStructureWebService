@@ -145,7 +145,7 @@ def calculate_adduct():
     m = molecular_factory(request)
     if m:
         exact_mass = m.exact_mass
-        mz = float(request.values.get('mz'))
+        mz = float(request.values.get('mz', 0))
 
         all_calculations = []
         for adduct in ADDUCT_SET:

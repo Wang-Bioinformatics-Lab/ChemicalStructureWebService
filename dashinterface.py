@@ -10,7 +10,6 @@ from dash.dependencies import Input, Output
 import os
 from flask import Flask
 
-
 import urllib.parse
 
 import json
@@ -20,7 +19,7 @@ from molmass import Formula
 import IsoSpecPy
 
 from Molecule import Molecule, molecular_factory_dict
-from adducts import get_adduct_mass
+from adducts import ADDUCT_SET, get_adduct_mass
 
 from app import app
 
@@ -224,7 +223,7 @@ def generate_adduct_information(formula_entry, smiles_entry, inchi_entry, inchik
         m = molecular_factory_dict(structure_dict)
         exact_mass = float(m.exact_mass)
 
-    adducts_to_report = ["M", "M+H", "M+Na", "M+K", "M+NH4", "M-H", "M+Br", "M+Cl"]
+    adducts_to_report = ADDUCT_SET
     output_list = []
 
     for adduct in adducts_to_report:

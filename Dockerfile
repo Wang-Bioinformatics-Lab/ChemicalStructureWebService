@@ -1,12 +1,21 @@
-FROM condaforge/mambaforge:23.1.0-4
-
+FROM ubuntu:22.04
 LABEL maintainer="Mingxun Wang mwang87@gmail.com"
 
-WORKDIR /app
-RUN apt-get update -y && apt-get install -y libxrender-dev build-essential
-RUN mamba create -n rdkit -c rdkit rdkit=2019.09.3.0
+RUN apt-get update && apt-get install -y build-essential libarchive-dev wget vim
 
-COPY requirements.txt /app
+# Install Mamba
+ENV CONDA_DIR /opt/conda
+RUN wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -O ~/miniforge.sh && /bin/bash ~/miniforge.sh -b -p /opt/conda
+ENV PATH=$CONDA_DIR/bin:$PATH
+
+# Adding to bashrc
+RUN echo "export PATH=$CONDA_DIR:$PATH" >> ~/.bashrc
+
+
+RUN mamba create -n rdkit -c rdkit rdkit=2024.03.1
+
+COPY requirements.txt .
 RUN /bin/bash -c "source activate rdkit && pip install -r requirements.txt"
 
 COPY . /app
+WORKDIR /app
