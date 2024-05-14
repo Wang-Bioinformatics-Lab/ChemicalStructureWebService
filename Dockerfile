@@ -12,7 +12,7 @@ ENV PATH=$CONDA_DIR/bin:$PATH
 RUN echo "export PATH=$CONDA_DIR:$PATH" >> ~/.bashrc
 
 
-RUN mamba create -n rdkit -c rdkit rdkit=2024.03.1
+RUN mamba create -n rdkit -c rdkit rdkit=2019.09.3.0
 
 COPY requirements.txt .
 RUN /bin/bash -c "source activate rdkit && pip install -r requirements.txt"
