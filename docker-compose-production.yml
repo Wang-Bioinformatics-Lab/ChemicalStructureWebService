@@ -8,6 +8,7 @@ services:
     command: /app/run_server.sh
     volumes:
       - ./logs:/app/logs:rw
+    restart: always
     environment:
       VIRTUAL_HOST: structure.gnps2.org
       VIRTUAL_PORT: 5000
