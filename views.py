@@ -179,14 +179,13 @@ def structureimg():
     if imgType == "png":
         output_filename = os.path.join("structure_images", uuid_key + ".png")
         m.save_image(output_filename, height=height, width=width, imageType="png")
-        return send_from_directory(output_filename, mimetype='image/png')
+        return send_from_directory("structure_images", uuid_key + ".png", mimetype='image/png')
     elif imgType == "svg":
         output_filename = os.path.join("structure_images", uuid_key + ".svg")
         m.save_image(output_filename, height=height, width=width, imageType="svg")
-        return send_from_directory(output_filename, mimetype='image/svg+xml')
+        return send_from_directory("structure_images", uuid_key + ".svg", mimetype='image/svg+xml')
     else:
         return send_from_directory("img", "GNPS2_logo.png", mimetype='image/png'), 400
-    
 
 # Calculates the structural similarity
 @app.route("/structuresimilarity", methods=['GET', 'POST'])
