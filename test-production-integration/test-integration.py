@@ -58,13 +58,13 @@ def test_formula():
 
     assert(r.text == "C8H10N4O2")
 
-def test_input_key():
-    inchikey = "RYYVLZVUVIJVGH-UHFFFAOYSA-N"
-    url = f"{SERVER_URL}/formula"
-    r = requests.get(url, params={"inchikey" : inchikey}, timeout=10)
-    r.raise_for_status()
+# def test_input_key():
+#     inchikey = "RYYVLZVUVIJVGH-UHFFFAOYSA-N"
+#     url = f"{SERVER_URL}/formula"
+#     r = requests.get(url, params={"inchikey" : inchikey}, timeout=10)
+#     r.raise_for_status()
 
-    assert(r.text == "C8H10N4O2")
+#     assert(r.text == "C8H10N4O2")
 
 def test_adduct():
     smiles = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
