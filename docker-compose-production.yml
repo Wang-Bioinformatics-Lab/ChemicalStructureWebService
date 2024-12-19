@@ -9,6 +9,10 @@ services:
     volumes:
       - ./logs:/app/logs:rw
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
     environment:
       VIRTUAL_HOST: structure.gnps2.org
       VIRTUAL_PORT: 5000
