@@ -12,6 +12,7 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem.Descriptors import ExactMolWt
 from rdkit.Chem.Draw import MolToFile
+from rdkit.Chem import Draw
 from rdkit.DataStructs import FingerprintSimilarity
 from rdkit.Chem.Fingerprints.FingerprintMols import FingerprintMol
 from rdkit.Chem.rdMolDescriptors import CalcMolFormula
@@ -19,6 +20,18 @@ from rdkit.Chem.rdMolDescriptors import CalcMolFormula
 from decorators import rdkit_handle_error
 from Molecule import Molecule, molecular_factory_dict
 from adducts import ADDUCT_SET, get_adduct_mass
+
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+
+import io
+from PIL import Image
+from io import BytesIO
+import base64
+
+
+
 
 # This is the molecule factory that will take in a request and try to figure out what molecule it is
 def molecular_factory(request) -> Molecule:
@@ -177,9 +190,27 @@ def structureimg():
         return send_from_directory("img", "GNPS2_logo.png", mimetype='image/png'), 400
 
     if imgType == "png":
-        output_filename = os.path.join("structure_images", uuid_key + ".png")
-        m.save_image(output_filename, height=height, width=width, imageType="png")
-        return send_from_directory("structure_images", uuid_key + ".png", mimetype='image/png')
+        #output_filename = os.path.join("structure_images", uuid_key + ".png")
+        #m.save_image(output_filename, height=height, width=width, imageType="png")
+        #return send_from_directory("structure_images", uuid_key + ".png", mimetype='image/png')
+        draw_kwargs = {}
+
+        x_dim = width
+        y_dim = height
+
+        d2d = Draw.MolDraw2DCairo(x_dim, y_dim)
+        font_size = x_dim // 20
+        d2d.drawOptions().minFontSize = font_size
+        d2d.drawOptions().maxFontSize = font_size
+
+        d2d.DrawMolecule(m.mol, **draw_kwargs)
+        d2d.FinishDrawing()
+        png = d2d.GetDrawingText()
+
+        buffer = io.BytesIO(png)
+        buffer.seek(0)
+        return send_file(buffer, mimetype='image/png')
+
     elif imgType == "svg":
         output_filename = os.path.join("structure_images", uuid_key + ".svg")
         m.save_image(output_filename, height=height, width=width, imageType="svg")
