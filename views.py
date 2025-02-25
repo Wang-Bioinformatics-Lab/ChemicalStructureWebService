@@ -84,6 +84,8 @@ def inchikey():
 @app.route("/classyfire", methods=['GET', 'POST'])
 @rdkit_handle_error
 def classyfire():
+    return "", 404
+
     m = molecular_factory(request)
     if m.mol:
         r = requests.get("https://classyfire.gnps2.org/entities/{}.json".format(m.inchikey))
